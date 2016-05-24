@@ -42,7 +42,7 @@ This will launch a webserver on [localhost:5000](http://localhost:5000) and will
 |	├── css
 |	├── fonts (Contains glyphicon fonts)
 |	├── img
-|	|	└── bg.jpg
+|	|	└── bg.png
 |	└── js
 ├── views (Contains the only swig view, since our pages are rendered by react)
 |	└── index.html
