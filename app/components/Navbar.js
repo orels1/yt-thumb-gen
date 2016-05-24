@@ -62,7 +62,7 @@ class Navbar extends React.Component {
                         </button>
                         <Link to='/' className='navbar-brand'>
                             <div className={ 'spinner ' + this.state.ajaxAnimationClass}></div>
-                            Новостной поток
+                            React APP
                         </Link>
                     </div>
                     <div className='navbar-collapse collapse' id='navbar'>

@@ -47,6 +47,7 @@ This will launch a webserver on [localhost:5000](http://localhost:5000) and will
 ├── views (Contains the only swig view, since our pages are rendered by react)
 |	└── index.html
 ├── .gitignore
+├── app.json (Heroku manifest)
 ├── bower.json (Bower package file)
 ├── gulpfile.js (Gulp build file)
 ├── package.json (Npm package file. You can set your app's name and repo there)
@@ -63,3 +64,9 @@ The basics, if you don't change anything, are the following:
 - To get data fro your api endpoints - use `$.ajax()` inside the actions and call them inside `componentDidMount` of your component to load data on build.
 
 I strongly recommend visiting [React's project page](https://facebook.github.io/react/docs) for more info on react itself and it's component's structure.
+
+## Deploy to Heroku
+
+If you want to show someone your results - I highly recommend deploying the app to Heroku. It's free and pretty ok for testing.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)

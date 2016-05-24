@@ -1,0 +1,6 @@
+{
+  "name": "React + Alt (Flux) Boilerplate",
+  "description": "A basic setup to build React apps",
+  "repository": "https://github.com/orels1/react-alt-boilerplate",
+  "keywords": ["node", "express", "react", "flux"]
+}
