@@ -1,0 +1,181 @@
+@import '../../bower_components/normalize.css/normalize'
+@import '../../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap'
+@import '../../bower_components/toastr/toastr.scss'
+
+@font-face
+  font-family: 'Glyphicons Halflings'
+  src: url('/fonts/glyphicons-halflings-regular.eot')
+  src: url('/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+  url('/fonts/glyphicons-halflings-regular.woff2') format('woff2'),
+  url('/fonts/glyphicons-halflings-regular.woff') format('woff'),
+  url('/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+  url('/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
+
+
+body
+  margin: 0
+  background: url('/img/bg.jpg')
+  background-attachment: fixed
+
+.navbar
+  background: #fff
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05)
+  border-bottom: 1px solid #e5e5e5
+
+  .navbar-brand
+    font-weight: bold
+    text-transform: uppercase
+    color: #000
+    font-family: 'Roboto', sans-serif
+
+    span
+      position: relative
+      top: -3px
+      margin-left: 10px
+      display: inline-block
+
+
+  .navbar-form
+    button
+      height: 34px
+
+/* Spinner */
+
+.spinner
+  width: 20px
+  height: 20px
+  background-color: #333
+
+  display: inline-block
+  opacity: 0
+
+  transition: opacity 300ms ease
+
+  -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out
+  animation: sk-rotateplane 1.2s infinite ease-in-out
+
+.spinner.loading
+  opacity: 1
+
+@-webkit-keyframes sk-rotateplane
+  0%
+    -webkit-transform: perspective(120px)
+  50%
+    -webkit-transform: perspective(120px) rotateY(180deg)
+  100%
+    -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg)
+
+@keyframes sk-rotateplane
+  0%
+    transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+    -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg)
+  50%
+    transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+    -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg)
+  100%
+    transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+    -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg)
+
+/* FeedList styles */
+
+.newsList
+  margin-top: 15px
+
+  .list-group-item
+    border-bottom: 2px solid rgba(0,0,0,0.1)
+
+    .position
+      font-size: 25px
+      font-weight: bold
+      color: rgba(0,0,0,0.4)
+      line-height: 40px
+
+    .thumb-lg
+      img
+        height: 40px
+        width: 40px
+        background: #ddd
+        background-size: contain
+        border: 1px solid rgba(0,0,0,0.8)
+        border-radius: 50px
+
+    .field
+      display: inline-block
+      position: relative
+      margin-left: 15px
+      min-width: 70px
+
+      small
+        position: absolute
+        top: 5px
+        left: 0
+        font-size: 11px
+
+      strong
+        line-height: 40px
+        position: relative
+        top: 8px
+
+    .field.text
+      padding-bottom: 18px
+
+      span
+        position: relative
+        top: 18px
+
+    .twitterImage
+      height: 300px
+      border-radius: 10px
+      width: auto
+      background-position: center center
+      background-size: cover
+      margin: 15px
+      opacity: 1
+      cursor: pointer
+      transition: opacity 300ms ease
+
+    .twitterImage:hover
+      opacity: 0.6
+
+  .hot
+    background: #f2dede !important
+
+  .hotMarker
+    position: absolute
+    left: -17px
+    top: 10px
+    font-size: 20px
+    color: #e74c3c
+    background: #fff
+    border-radius: 40px
+    padding: 5px 9px
+    box-shadow: 0 0 3px rgba(0,0,0,0.1)
+
+
+/* Bootstrap Restyles */
+.panel, .list-group, .liveFeed
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1)
+  border: none
+
+.list-group-item
+  border-top: none
+  border-left: none
+  border-right: none
+
+.media
+  margin-top: 0px
+
+.navbar-right
+  margin-right: 0 !important
+
+
+/* Modal */
+.Modal__Bootstrap.modal-dialog
+  border: none !important
+  background: none !important
+  overflow: visible !important
+
+h2.welcome
+  //color: #fff
