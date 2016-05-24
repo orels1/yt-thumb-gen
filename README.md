@@ -19,7 +19,7 @@ To start up a little dev server - run `gulp default` and `npm run watch`
 This will launch a webserver on [localhost:5000](http://localhost:5000) and will watch for all the changes.
 
 ## Project structure
-
+```
 .
 ├── app (Main React folder with sources)
 |	├── actions (All the React actions are stored here)
@@ -53,6 +53,7 @@ This will launch a webserver on [localhost:5000](http://localhost:5000) and will
 ├── package.json (Npm package file. You can set your app's name and repo there)
 ├── README.MD
 └── server.js (Dev node.js server)
+```
 
 ## Usage
 
