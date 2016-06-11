@@ -1,6 +1,6 @@
 {
-  "name": "react-boilerplate",
-  "description": "A base for your react app",
+  "name": "yt-thumbnail-generator",
+  "description": "A little webtool for generation youtube thumbnails",
   "version": "1.0.0",
   "engine": "node",
   "repository": {
