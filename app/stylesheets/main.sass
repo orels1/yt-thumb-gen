@@ -11,6 +11,36 @@
   url('/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
   url('/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
 
+@font-face
+  font-family: 'Bebas Neue Thin'
+  src: url('/fonts/bebasneue_thin-webfont.woff2') format('woff2'),
+  url('/fonts/bebasneue_thin-webfont.woff') format('woff')
+
+@font-face
+  font-family: 'Bebas Neue'
+  src: url('/fonts/bebasneue_regular-webfont.woff2') format('woff2'),
+  url('/fonts/bebasneue_regular-webfont.woff') format('woff')
+
+@font-face
+  font-family: 'Bebas Neue Light'
+  src: url('/fonts/bebasneue_light-webfont.woff2') format('woff2'),
+  url('/fonts/bebasneue_light-webfont.woff') format('woff')
+
+@font-face
+  font-family: 'Bebas Neue Book'
+  src: url('/fonts/bebasneue_book-webfont.woff2') format('woff2'),
+  url('/fonts/bebasneue_book-webfont.woff') format('woff')
+
+@font-face
+  font-family: 'Bebas Neue Bold'
+  src: url('/fonts/bebasneue_bold-webfont.woff2') format('woff2'),
+  url('/fonts/bebasneue_bold-webfont.woff') format('woff')
+
+$bebas: 'Bebas Neue'
+$bebas-thin: 'Bebas Neue Thin'
+$bebas-light: 'Bebas Neue Light'
+$bebas-book: 'Bebas Neue Book'
+$bebas-bold: 'Bebas Neue Bold'
 
 body
   margin: 0
@@ -18,6 +48,7 @@ body
   background-attachment: fixed
   background-size: cover
   background-repeat: no-repeat
+  font-family: $bebas
 
 .navbar
   background: #fff
@@ -27,10 +58,9 @@ body
   border-bottom: 1px solid #e5e5e5
 
   .navbar-brand
-    font-weight: bold
     text-transform: uppercase
     color: #000
-    font-family: 'Roboto', sans-serif
+    font-family: $bebas-bold, sans-serif
 
     span
       position: relative
@@ -155,6 +185,24 @@ body
     padding: 5px 9px
     box-shadow: 0 0 3px rgba(0,0,0,0.1)
 
+// Dropzone
+
+.dropzone
+  margin: 20px
+  padding: 20px
+  border: 3px dashed
+  border-radius: 6px
+  font-size: 30px
+  text-align: center
+  transition: background 300ms ease
+
+  &:hover
+    background: rgba(0, 0, 126, 0.1)
+
+#drop
+
+  img
+    max-width: 100%
 
 /* Bootstrap Restyles */
 .panel, .list-group, .liveFeed
@@ -172,6 +220,20 @@ body
 .navbar-right
   margin-right: 0 !important
 
+.panel
+
+  .panel-heading
+
+    .panel-title
+      font-family: $bebas-bold
+      font-size: 24px
+
+  .panel-body
+    
+    p
+      font-family: $bebas-book, sans-serif
+      font-size: 18px
+
 
 /* Modal */
 .Modal__Bootstrap.modal-dialog
@@ -181,3 +243,78 @@ body
 
 h2.welcome
   //color: #fff
+
+/**
+ * Rangeslider
+ */
+.rangeslider 
+  margin: 20px 0
+  position: relative
+  background: #e6e6e6
+
+  .rangeslider__fill, .rangeslider__handle
+    position: absolute
+  
+  &, .rangeslider__fill 
+    display: block
+    box-shadow: inset 0px 1px 3px rgba(0, 0, 0, 0.3)
+  
+  .rangeslider__handle 
+    background: #fff
+    box-shadow: 0 0 4px rgba(52, 152, 219,0.4)
+    cursor: pointer
+    display: inline-block
+    position: absolute
+
+    &:active 
+      background: #3498db
+    
+  
+
+
+/**
+ * Rangeslider - Horizontal slider
+ */
+.rangeslider-horizontal 
+  height: 5px
+  border-radius: 10px
+
+  .rangeslider__fill
+    height: 100%
+    background: #3498db
+    border-radius: 10px
+    top: 0
+  
+  .rangeslider__handle 
+    width: 25px
+    height: 25px
+    border-radius: 40px
+    top: -10px
+  
+
+
+/**
+ * Rangeslider - Vertical slider
+ */
+.rangeslider-vertical 
+  margin: 20px auto
+  height: 150px
+  max-width: 10px
+  background: none
+
+  .rangeslider__fill 
+    width: 100%
+    background: #27ae60
+    box-shadow: none
+    bottom: 0
+  
+  .rangeslider__handle 
+    width: 30px
+    height: 10px
+    left: -10px
+
+    &:active 
+      box-shadow: none
+    
+  
+

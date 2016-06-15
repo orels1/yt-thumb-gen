@@ -1,0 +1,3 @@
+{
+	"ignore": ["app/*", "public/js/bundle.js", "_build/*", "public/data/data.json"]
+}

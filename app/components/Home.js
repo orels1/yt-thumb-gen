@@ -6,6 +6,9 @@ import HomeStore from '../stores/HomeStore';
 import HomeActions from '../actions/HomeActions';
 import {Link} from 'react-router';
 
+// Extra components
+import Drawing from './Drawing';
+
 // Your main class, as defined in routes.
 // You can read more about component's lifecycle here
 // https://facebook.github.io/react/docs/component-specs.html
@@ -37,11 +40,7 @@ class Home extends React.Component {
     render() {
         return (
             <div>
-                <div className="panel panel-default">
-                    <div className="panel-body">
-                        <h1>Hello there</h1>
-                    </div>
-                </div>
+                <Drawing />
             </div>
         );
     }
