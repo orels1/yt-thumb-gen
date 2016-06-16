@@ -8,6 +8,7 @@ class DrawingActions {
         this.generateActions(
         	'updatePadding',
             'updateBorder',
+            'updateFrameColor',
             'updateImage',
             'updateContext',
             'updateEditor',
@@ -15,9 +16,11 @@ class DrawingActions {
             'updateTitleFontSize',
             'updateTitleText',
             'updateTitleAlignment',
+            'updateTitleColor',
             'updateSubTitleFontSize',
             'updateSubTitleText',
-            'updateSubTitleAlignment'
+            'updateSubTitleAlignment',
+            'updateSubTitleColor'
         );
     }
 

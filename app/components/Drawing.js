@@ -6,6 +6,7 @@ import {Link} from 'react-router';
 // Extra components
 import Dropzone from 'react-dropzone';
 import Slider from 'react-rangeslider';
+import { SketchPicker } from 'react-color';
 
 // Your main class, as defined in routes.
 // You can read more about component's lifecycle here
@@ -104,12 +105,14 @@ class Drawing extends React.Component {
                 this.drawText(this.state.titleText,
                               this.state.titleFontSize,
                               this.state.titleAlignment,
+                              this.state.titleColor,
                               1);
             }
             if (this.state.subTitleText.length !== 0) {
                 this.drawText(this.state.subTitleText,
                               this.state.subTitleFontSize,
                               this.state.subTitleAlignment,
+                              this.state.subTitleColor,
                               2);
             }
         }, 50);
@@ -117,7 +120,7 @@ class Drawing extends React.Component {
 
     drawFrame(border, padding, color) {
         // set stroke color
-        this.state.ctx.strokeStyle = color;
+        this.state.ctx.strokeStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 
         for (let i = border; i > 0; i--) {
             this.state.ctx.strokeRect(padding + i, padding + i, 1110 - padding * 2 - i * 2, 624 - padding * 2 - i * 2);
@@ -131,12 +134,12 @@ class Drawing extends React.Component {
         this.state.ctx.fillRect(0, 0, 1110, 624);
     }
 
-    drawText(text, font, alignment, position) {
+    drawText(text, font, alignment, color, position) {
         // set font
         this.state.ctx.font = font + 'px Bebas Neue Bold';
 
         // set fill color
-        this.state.ctx.fillStyle = 'rgba(255,255,255,1)';
+        this.state.ctx.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 
         // set text align
         this.state.ctx.textAlign = alignment.horizontal;
@@ -226,6 +229,21 @@ class Drawing extends React.Component {
         this.redrawCanvas();
     }
 
+    handleTitleColorChange(color) {
+        DrawingActions.updateTitleColor(color.rgb);
+        this.redrawCanvas();
+    }
+
+    handleSubTitleColorChange(color) {
+        DrawingActions.updateSubTitleColor(color.rgb);
+        this.redrawCanvas();
+    }
+
+    handleFrameColorChange(color) {
+        DrawingActions.updateFrameColor(color.rgb);
+        this.redrawCanvas();
+    }
+
     handleSaveResult() {
         this.downloadURI(this.state.editor.toDataURL('image/png'), 'thumbnail.png');
     }
@@ -251,178 +269,250 @@ class Drawing extends React.Component {
                         >
                             <div>Drop an image</div>
                         </Dropzone>
-                        {this.state.img &&
-                            <div>
-                                <p>
-                                    Frame padding (distance from edges)
-                                </p>
-                                <Slider
-                                value={this.state.padding}
-                                min={0}
-                                max={50}
-                                step={1}
-                                orientation="horizontal"
-                                onChange={this.handlePaddingChange.bind(this)}
-                                />
-
-                                <p>
-                                    Frame size
-                                </p>
-
-                                <Slider
-                                value={this.state.border}
-                                min={0}
-                                max={50}
-                                step={1}
-                                orientation="horizontal"
-                                onChange={this.handleBorderChange.bind(this)}
-                                />
-
-                                <p>
-                                    Black overlay opacity
-                                </p>
-
-                                <Slider
-                                value={this.state.opacity}
-                                min={0}
-                                max={1}
-                                step={0.05}
-                                orientation="horizontal"
-                                onChange={this.handleOverlayChange.bind(this)}
-                                />
-
-                                <p>
-                                    Title Text
-                                </p>
-
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <div className="input-group-btn">
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 1, 'right')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-left"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 1, 'center')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-center"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 1, 'left')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-right"></span>
-                                            </button>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={this.state.titleText}
-                                            placeholder="First line of text e.g. your name"
-                                            onChange={this.handleTitleTextChange.bind(this)}
-                                        />
-                                        <div className="input-group-btn">
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 2, 'bottom')}
-                                            >
-                                                <span className="glyphicon glyphicon-collapse-up"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 2, 'middle')}
-                                            >
-                                                <span className="glyphicon glyphicon-expand"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleTitleAlignmentChange.bind(this, 2, 'top')}
-                                            >
-                                                <span className="glyphicon glyphicon-collapse-down"></span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p>
-                                    Title font size
-                                </p>
-
-                                <Slider
-                                value={this.state.titleFontSize}
-                                min={10}
-                                max={200}
-                                step={2}
-                                orientation="horizontal"
-                                onChange={this.handleTitleFontChange.bind(this)}
-                                />
-
-                                <p>
-                                    Subtitle Text
-                                </p>
-
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <div className="input-group-btn">
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'right')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-left"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'center')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-center"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'left')}
-                                            >
-                                                <span className="glyphicon glyphicon-align-right"></span>
-                                            </button>
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            value={this.state.subTitleText}
-                                            placeholder="First line of text e.g. your name"
-                                            onChange={this.handleSubTitleTextChange.bind(this)}
-                                        />
-                                        <div className="input-group-btn">
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'bottom')}
-                                            >
-                                                <span className="glyphicon glyphicon-collapse-up"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'middle')}
-                                            >
-                                                <span className="glyphicon glyphicon-expand"></span>
-                                            </button>
-                                            <button className="btn btn-default"
-                                            onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'top')}
-                                            >
-                                                <span className="glyphicon glyphicon-collapse-down"></span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <p>
-                                    Subtitle font size
-                                </p>
-
-                                <Slider
-                                value={this.state.subTitleFontSize}
-                                min={10}
-                                max={200}
-                                step={2}
-                                orientation="horizontal"
-                                onChange={this.handleSubTitleFontChange.bind(this)}
-                                />
-
-                            </div>
-                        }
 
                         <canvas id="editor">
                             Update your browser
                         </canvas>
+
+                        <br /><br />
+
+                        {this.state.img &&
+                            <div>
+                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                    <div className="panel panel-default">
+                                        <div className="panel-heading">
+                                            Background options
+                                        </div>
+                                        <div className="panel-body">
+                                            <p>
+                                                Black overlay opacity
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.opacity}
+                                            min={0}
+                                            max={1}
+                                            step={0.05}
+                                            orientation="horizontal"
+                                            onChange={this.handleOverlayChange.bind(this)}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                    <div className="panel panel-default">
+                                        <div className="panel-heading">
+                                            Frame options
+                                        </div>
+                                        <div className="panel-body">
+                                             <p>
+                                                Frame padding (distance from edges)
+                                            </p>
+                                            <Slider
+                                            value={this.state.padding}
+                                            min={0}
+                                            max={50}
+                                            step={1}
+                                            orientation="horizontal"
+                                            onChange={this.handlePaddingChange.bind(this)}
+                                            />
+
+                                            <p>
+                                                Frame size
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.border}
+                                            min={0}
+                                            max={50}
+                                            step={1}
+                                            orientation="horizontal"
+                                            onChange={this.handleBorderChange.bind(this)}
+                                            />
+
+                                            <p>
+                                                Frame color
+                                            </p>
+
+                                            <SketchPicker
+                                            color={this.state.frameColor}
+                                            onChange={this.handleFrameColorChange.bind(this)}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="clearfix"></div>
+
+                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                    <div className="panel panel-default">
+                                        <div className="panel-heading">
+                                            Title options
+                                        </div>
+                                        <div className="panel-body">
+                                            <p>
+                                                Title Text
+                                            </p>
+
+                                            <div className="form-group">
+                                                <div className="input-group">
+                                                    <div className="input-group-btn aligments">
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'right')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-left"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'center')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-center"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'left')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-right"></span>
+                                                        </button>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={this.state.titleText}
+                                                        placeholder="First line of text e.g. your name"
+                                                        onChange={this.handleTitleTextChange.bind(this)}
+                                                    />
+                                                    <div className="input-group-btn aligments">
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 2, 'bottom')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-collapse-up"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 2, 'middle')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-expand"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 2, 'top')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-collapse-down"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p>
+                                                Title font size
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.titleFontSize}
+                                            min={10}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleTitleFontChange.bind(this)}
+                                            />
+
+                                            <p>
+                                                Title color
+                                            </p>
+
+                                            <SketchPicker
+                                            color={this.state.titleColor}
+                                            onChange={this.handleTitleColorChange.bind(this)}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                    <div className="panel panel-default">
+                                        <div className="panel-heading">
+                                            Subtitle options
+                                        </div>
+                                        <div className="panel-body">
+
+                                            <p>
+                                                Subtitle Text
+                                            </p>
+
+                                            <div className="form-group">
+                                                <div className="input-group">
+                                                    <div className="input-group-btn aligments">
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'right')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-left"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'center')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-center"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'left')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-align-right"></span>
+                                                        </button>
+                                                    </div>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={this.state.subTitleText}
+                                                        placeholder="First line of text e.g. your name"
+                                                        onChange={this.handleSubTitleTextChange.bind(this)}
+                                                    />
+                                                    <div className="input-group-btn aligments">
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'bottom')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-collapse-up"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'middle')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-expand"></span>
+                                                        </button>
+                                                        <button className="btn btn-default"
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 2, 'top')}
+                                                        >
+                                                            <span className="glyphicon glyphicon-collapse-down"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p>
+                                                Subtitle font size
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.subTitleFontSize}
+                                            min={10}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleSubTitleFontChange.bind(this)}
+                                            />
+
+                                            <p>
+                                                Subtitle color
+                                            </p>
+
+                                            <SketchPicker
+                                            color={this.state.subTitleColor}
+                                            onChange={this.handleSubTitleColorChange.bind(this)}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
 
                         {this.state.img &&
                             <div className="align-center">
