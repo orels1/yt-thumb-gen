@@ -275,7 +275,7 @@ class Drawing extends React.Component {
     }
 
     handleSubTitleFontChange(value) {
-        DrawingActions.updateSubTitleFontSize(value instanceof Object ? parseInt((value.target.value) : value);
+        DrawingActions.updateSubTitleFontSize(value instanceof Object ? parseInt(value.target.value) : value);
         this.redrawCanvas();
     }
 

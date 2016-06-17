@@ -24,7 +24,7 @@ class DrawingStore {
         this.titleText = '';
         this.titleAlignment = {
             'horizontal': 'center',
-            'vertical': 'top',
+            'vertical': 'bottom',
         };
         this.titleColor = {
             'r': 255,
@@ -40,7 +40,7 @@ class DrawingStore {
         this.subTitleText = '';
         this.subTitleAlignment = {
             'horizontal': 'center',
-            'vertical': 'bottom',
+            'vertical': 'top',
         };
         this.subTitleColor = {
             'r': 255,
