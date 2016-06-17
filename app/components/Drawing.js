@@ -24,6 +24,20 @@ class Drawing extends React.Component {
     componentDidMount() {
         // Will fire once, after markup has been injected
         DrawingStore.listen(this.onChange);
+
+        $(window).scroll(() => {
+            if (window.scrollY >= $('canvas').offset().top + 624) {
+                if (!$('canvas').hasClass('floating-box')) {
+                    $('canvas').addClass('floating-box');
+                    window.scrollTo(0, 305);
+                }
+            } else {
+                if ($('canvas').hasClass('floating-box') && window.scrollY <= 250) {
+                    $('canvas').removeClass('floating-box');
+                    window.scrollTo(0, 860);
+                }
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -98,6 +112,9 @@ class Drawing extends React.Component {
             if (this.state.opacity !== 0) {
                 this.drawOverlay(this.state.opacity);
             }
+            if (this.state.vignette.opacity !== 0) {
+                this.drawVignette(this.state.vignette.size, this.state.vignette.opacity);
+            }
             if (this.state.border !== 0) {
                 this.drawFrame(this.state.border, this.state.padding, this.state.frameColor);
             }
@@ -106,6 +123,7 @@ class Drawing extends React.Component {
                               this.state.titleFontSize,
                               this.state.titleAlignment,
                               this.state.titleColor,
+                              this.state.titleShift,
                               1);
             }
             if (this.state.subTitleText.length !== 0) {
@@ -113,6 +131,7 @@ class Drawing extends React.Component {
                               this.state.subTitleFontSize,
                               this.state.subTitleAlignment,
                               this.state.subTitleColor,
+                              this.state.subTitleShift,
                               2);
             }
         }, 50);
@@ -134,7 +153,7 @@ class Drawing extends React.Component {
         this.state.ctx.fillRect(0, 0, 1110, 624);
     }
 
-    drawText(text, font, alignment, color, position) {
+    drawText(text, font, alignment, color, shift, position) {
         // set font
         this.state.ctx.font = font + 'px Bebas Neue Bold';
 
@@ -147,11 +166,47 @@ class Drawing extends React.Component {
         // set text baseling
         this.state.ctx.textBaseline = alignment.vertical;
 
-        if (position === 1) {
-            this.state.ctx.fillText(text, 555, 312);
-        } else {
-            this.state.ctx.fillText(text, 555, 312);
+        // switch for proper positions
+        let pos = {
+            'h': 0,
+            'v': 0,
+        };
+        switch (alignment.horizontal) {
+        case 'left':
+            pos.h = 40 + this.state.padding + this.state.border + shift.h;
+            pos.v = 312 + shift.v;
+            break;
+
+        case 'center':
+            pos.h = 555 + shift.h;
+            pos.v = 312 + shift.v;
+            break;
+
+        case 'right':
+            pos.h = 1060 - this.state.padding - this.state.border + shift.h;
+            pos.v = 312 + shift.v;
+            break;
+
+        default:
+            pos.h = 555 + shift.h;
+            pos.v = 312 + shift.v;
+            break;
         }
+
+        if (position === 1) {
+            this.state.ctx.fillText(text, pos.h, pos.v);
+        } else {
+            this.state.ctx.fillText(text, pos.h, pos.v);
+        }
+    }
+
+    drawVignette(size, opacity) {
+        let grd = this.state.ctx.createRadialGradient(555, 312, 400 - size, 555, 312, 800 - size);
+        grd.addColorStop(0, 'rgba(0,0,0,0)');
+        grd.addColorStop(1, 'rgba(0,0,0,' + opacity + ')');
+
+        this.state.ctx.fillStyle = grd;
+        this.state.ctx.fillRect(0, 0, 1110, 624);
     }
 
     downloadURI(uri, name) {
@@ -179,8 +234,23 @@ class Drawing extends React.Component {
         this.redrawCanvas();
     }
 
+    handleVignetteChange(type, value) {
+        if (type === 'opacity') {
+            DrawingActions.updateVignette({
+                'opacity': value instanceof Object ? parseInt(value.target.value) : value,
+                'size': this.state.vignette.size,
+            });
+        } else {
+            DrawingActions.updateVignette({
+                'opacity': this.state.vignette.opacity,
+                'size': value instanceof Object ? parseInt(value.target.value) : value,
+            });
+        }
+        this.redrawCanvas();
+    }
+
     handleTitleFontChange(value) {
-        DrawingActions.updateTitleFontSize(value);
+        DrawingActions.updateTitleFontSize(value instanceof Object ? parseInt(value.target.value) : value);
         this.redrawCanvas();
     }
 
@@ -192,20 +262,20 @@ class Drawing extends React.Component {
     handleTitleAlignmentChange(type, alignment) {
         if (type === 1) {
             DrawingActions.updateTitleAlignment({
-                'horizontal': alignment,
+                'horizontal': alignment instanceof Object ? parseInt(value.target.value) : alignment,
                 'vertical': this.state.titleAlignment.vertical,
             });
         } else {
             DrawingActions.updateTitleAlignment({
                 'horizontal': this.state.titleAlignment.horizontal,
-                'vertical': alignment,
+                'vertical': alignment instanceof Object ? parseInt(value.target.value) : alignment,
             });
         }
         this.redrawCanvas();
     }
 
     handleSubTitleFontChange(value) {
-        DrawingActions.updateSubTitleFontSize(value);
+        DrawingActions.updateSubTitleFontSize(value instanceof Object ? parseInt((value.target.value) : value);
         this.redrawCanvas();
     }
 
@@ -217,13 +287,13 @@ class Drawing extends React.Component {
     handleSubTitleAlignmentChange(type, alignment) {
         if (type === 1) {
             DrawingActions.updateSubTitleAlignment({
-                'horizontal': alignment,
+                'horizontal': alignment instanceof Object ? parseInt(value.target.value) : alignment,
                 'vertical': this.state.subTitleAlignment.vertical,
             });
         } else {
             DrawingActions.updateSubTitleAlignment({
                 'horizontal': this.state.subTitleAlignment.horizontal,
-                'vertical': alignment,
+                'vertical': alignment instanceof Object ? parseInt(value.target.value) : alignment,
             });
         }
         this.redrawCanvas();
@@ -241,6 +311,36 @@ class Drawing extends React.Component {
 
     handleFrameColorChange(color) {
         DrawingActions.updateFrameColor(color.rgb);
+        this.redrawCanvas();
+    }
+
+    handleTitleShiftChange(type, value) {
+        if (type === 1) {
+            DrawingActions.updateTitleShift({
+                'h': value instanceof Object ? parseInt(value.target.value) : value,
+                'v': this.state.titleShift.v,
+            });
+        } else {
+            DrawingActions.updateTitleShift({
+                'h': this.state.titleShift.h,
+                'v': value instanceof Object ? parseInt(value.target.value) : value,
+            });
+        }
+        this.redrawCanvas();
+    }
+
+    handleSubTitleShiftChange(type, value) {
+        if (type === 1) {
+            DrawingActions.updateSubTitleShift({
+                'h': value instanceof Object ? parseInt(value.target.value) : value,
+                'v': this.state.subTitleShift.v,
+            });
+        } else {
+            DrawingActions.updateSubTitleShift({
+                'h': this.state.subTitleShift.h,
+                'v': value instanceof Object ? parseInt(value.target.value) : value,
+            });
+        }
         this.redrawCanvas();
     }
 
@@ -278,7 +378,7 @@ class Drawing extends React.Component {
 
                         {this.state.img &&
                             <div>
-                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                <div className="col-md-6 col-lg-6 col-sm-12">
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             Background options
@@ -296,17 +396,43 @@ class Drawing extends React.Component {
                                             orientation="horizontal"
                                             onChange={this.handleOverlayChange.bind(this)}
                                             />
+
+                                            <p>
+                                                Vignette opacity
+                                            </p>
+                                            <Slider
+                                            value={this.state.vignette.opacity}
+                                            min={0}
+                                            max={1}
+                                            step={0.1}
+                                            orientation="horizontal"
+                                            onChange={this.handleVignetteChange.bind(this, 'opacity')}
+                                            />
+
+                                            <p>
+                                                Vignette size
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.vignette.size}
+                                            min={-200}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleVignetteChange.bind(this, 'size')}
+                                            />
+
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                <div className="col-md-6 col-lg-6 col-sm-12">
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             Frame options
                                         </div>
                                         <div className="panel-body">
-                                             <p>
+                                            <p>
                                                 Frame padding (distance from edges)
                                             </p>
                                             <Slider
@@ -346,7 +472,7 @@ class Drawing extends React.Component {
 
                                 <div className="clearfix"></div>
 
-                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                <div className="col-md-6 col-lg-6 col-sm-12">
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             Title options
@@ -360,7 +486,7 @@ class Drawing extends React.Component {
                                                 <div className="input-group">
                                                     <div className="input-group-btn aligments">
                                                         <button className="btn btn-default"
-                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'right')}
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'left')}
                                                         >
                                                             <span className="glyphicon glyphicon-align-left"></span>
                                                         </button>
@@ -370,7 +496,7 @@ class Drawing extends React.Component {
                                                             <span className="glyphicon glyphicon-align-center"></span>
                                                         </button>
                                                         <button className="btn btn-default"
-                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'left')}
+                                                        onClick={this.handleTitleAlignmentChange.bind(this, 1, 'right')}
                                                         >
                                                             <span className="glyphicon glyphicon-align-right"></span>
                                                         </button>
@@ -402,15 +528,71 @@ class Drawing extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <p>
-                                                Title font size
-                                            </p>
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Title horizontal shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.titleShift.h}
+                                                    onChange={this.handleTitleShiftChange.bind(this, 1)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.titleShift.h}
+                                            min={-200}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleTitleShiftChange.bind(this, 1)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Title vertical shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.titleShift.v}
+                                                    onChange={this.handleTitleShiftChange.bind(this, 2)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.titleShift.v}
+                                            min={-200}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleTitleShiftChange.bind(this, 2)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Title font size
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.titleFontSize}
+                                                    onChange={this.handleTitleFontChange.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
 
                                             <Slider
                                             value={this.state.titleFontSize}
                                             min={10}
-                                            max={200}
-                                            step={2}
+                                            max={201}
+                                            step={3}
                                             orientation="horizontal"
                                             onChange={this.handleTitleFontChange.bind(this)}
                                             />
@@ -428,7 +610,7 @@ class Drawing extends React.Component {
                                     </div>
                                 </div>
 
-                                <div className="col-md-6 col-lg-6 col-sm-6">
+                                <div className="col-md-6 col-lg-6 col-sm-12">
                                     <div className="panel panel-default">
                                         <div className="panel-heading">
                                             Subtitle options
@@ -443,7 +625,7 @@ class Drawing extends React.Component {
                                                 <div className="input-group">
                                                     <div className="input-group-btn aligments">
                                                         <button className="btn btn-default"
-                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'right')}
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'left')}
                                                         >
                                                             <span className="glyphicon glyphicon-align-left"></span>
                                                         </button>
@@ -453,7 +635,7 @@ class Drawing extends React.Component {
                                                             <span className="glyphicon glyphicon-align-center"></span>
                                                         </button>
                                                         <button className="btn btn-default"
-                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'left')}
+                                                        onClick={this.handleSubTitleAlignmentChange.bind(this, 1, 'right')}
                                                         >
                                                             <span className="glyphicon glyphicon-align-right"></span>
                                                         </button>
@@ -485,15 +667,71 @@ class Drawing extends React.Component {
                                                 </div>
                                             </div>
 
-                                            <p>
-                                                Subtitle font size
-                                            </p>
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Subtitle horizontal shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.subTitleShift.h}
+                                                    onChange={this.handleSubTitleShiftChange.bind(this, 1)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.subTitleShift.h}
+                                            min={-200}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleSubTitleShiftChange.bind(this, 1)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Subtitle vertical shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.subTitleShift.v}
+                                                    onChange={this.handleSubTitleShiftChange.bind(this, 2)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.subTitleShift.v}
+                                            min={-200}
+                                            max={200}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleSubTitleShiftChange.bind(this, 2)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Subtitle font size
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.subTitleFontSize}
+                                                    onChange={this.handleSubTitleFontChange.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
 
                                             <Slider
                                             value={this.state.subTitleFontSize}
                                             min={10}
-                                            max={200}
-                                            step={2}
+                                            max={201}
+                                            step={3}
                                             orientation="horizontal"
                                             onChange={this.handleSubTitleFontChange.bind(this)}
                                             />

@@ -13,14 +13,17 @@ class DrawingActions {
             'updateContext',
             'updateEditor',
             'updateOpacity',
+            'updateVignette',
             'updateTitleFontSize',
             'updateTitleText',
             'updateTitleAlignment',
             'updateTitleColor',
+            'updateTitleShift',
             'updateSubTitleFontSize',
             'updateSubTitleText',
             'updateSubTitleAlignment',
-            'updateSubTitleColor'
+            'updateSubTitleColor',
+            'updateSubTitleShift'
         );
     }
 

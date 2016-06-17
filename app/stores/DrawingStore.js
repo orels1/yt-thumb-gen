@@ -16,11 +16,15 @@ class DrawingStore {
         this.padding = 0;
         this.border = 0;
         this.opacity = 0;
+        this.vignette = {
+            'opacity': 0,
+            'size': 0,
+        };
         this.titleFontSize = 30;
         this.titleText = '';
         this.titleAlignment = {
             'horizontal': 'center',
-            'vertical': 'middle',
+            'vertical': 'top',
         };
         this.titleColor = {
             'r': 255,
@@ -28,17 +32,25 @@ class DrawingStore {
             'b': 255,
             'a': 1,
         };
+        this.titleShift = {
+            'h': 0,
+            'v': 0,
+        };
         this.subTitleFontSize = 30;
         this.subTitleText = '';
         this.subTitleAlignment = {
             'horizontal': 'center',
-            'vertical': 'middle',
+            'vertical': 'bottom',
         };
         this.subTitleColor = {
             'r': 255,
             'g': 255,
             'b': 255,
             'a': 1,
+        };
+        this.subTitleShift = {
+            'h': 0,
+            'v': 0,
         };
     }
 
@@ -70,6 +82,10 @@ class DrawingStore {
         this.opacity = value;
     }
 
+    onUpdateVignette(value) {
+        this.vignette = value;
+    }
+
     onUpdateTitleFontSize(value) {
         this.titleFontSize = value;
     }
@@ -86,6 +102,10 @@ class DrawingStore {
         this.titleColor = value;
     }
 
+    onUpdateTitleShift(value) {
+        this.titleShift = value;
+    }
+
     onUpdateSubTitleFontSize(value) {
         this.subTitleFontSize = value;
     }
@@ -100,6 +120,10 @@ class DrawingStore {
 
     onUpdateSubTitleColor(value) {
         this.subTitleColor = value;
+    }
+
+    onUpdateSubTitleShift(value) {
+        this.subTitleShift = value;
     }
 
 }

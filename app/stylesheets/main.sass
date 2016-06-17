@@ -204,6 +204,16 @@ body
   img
     max-width: 100%
 
+// Canvas
+.floating-box
+  position: fixed
+  top: -226px
+  left: -393px
+  z-index: 100
+  border: 6px solid #fff
+  box-shadow: 0 0 10px rgba(0,0,0,0.8)
+  transform: scale(0.3,0.3)
+
 /* Bootstrap Restyles */
 .panel, .list-group, .liveFeed
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1)
@@ -223,6 +233,7 @@ body
 .panel
 
   .panel-heading
+    font-size: 20px
 
     .panel-title
       font-family: $bebas-bold
@@ -238,6 +249,12 @@ body
 
   .btn
     height: 34px
+
+.panel
+
+  label
+    margin-right: 10px
+    font-size: 18px
 
 
 /* Modal */
