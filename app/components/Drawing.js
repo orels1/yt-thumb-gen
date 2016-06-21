@@ -910,7 +910,7 @@ class Drawing extends React.Component {
                                             </Dropzone>
 
                                             <p>
-                                                Image horizontal alignment
+                                                Image alignment
                                             </p>
 
                                             <div className="btn-group">
@@ -1043,10 +1043,13 @@ class Drawing extends React.Component {
                         }
 
                         {this.state.img &&
-                            <div className="align-center">
-                                <button className="btn btn-primary" onClick={this.handleSaveResult.bind(this)}>
-                                    Save result
-                                </button>
+                            <div>
+                                <div className="clearfix"></div>
+                                <div className="align-center">
+                                    <button className="btn btn-primary" style={{'width': '100%'}} onClick={this.handleSaveResult.bind(this)}>
+                                        Save result
+                                    </button>
+                                </div>
                             </div>
                         }
 
