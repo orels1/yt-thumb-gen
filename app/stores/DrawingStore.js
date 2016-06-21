@@ -15,7 +15,15 @@ class DrawingStore {
         };
         this.padding = 0;
         this.border = 0;
-        this.opacity = 0;
+        this.overlay = {
+            'opacity': 0,
+            'color': {
+                'r': 0,
+                'g': 0,
+                'b': 0,
+                'a': 0,
+            },
+        };
         this.vignette = {
             'opacity': 0,
             'size': 0,
@@ -52,6 +60,15 @@ class DrawingStore {
             'h': 0,
             'v': 0,
         };
+        this.branding = {
+            'img': null,
+            'h': 0,
+            'v': 0,
+            'opacity': 1,
+            'scale': 1,
+            'align': 'left',
+            'valign': 'top',
+        };
     }
 
     onUpdateBorder(value) {
@@ -78,8 +95,8 @@ class DrawingStore {
         this.editor = value;
     }
 
-    onUpdateOpacity(value) {
-        this.opacity = value;
+    onUpdateOverlay(value) {
+        this.overlay = value;
     }
 
     onUpdateVignette(value) {
@@ -124,6 +141,10 @@ class DrawingStore {
 
     onUpdateSubTitleShift(value) {
         this.subTitleShift = value;
+    }
+
+    onUpdateBranding(value) {
+        this.branding = value;
     }
 
 }

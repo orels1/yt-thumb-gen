@@ -26,15 +26,15 @@ class Drawing extends React.Component {
         DrawingStore.listen(this.onChange);
 
         $(window).scroll(() => {
-            if (window.scrollY >= $('canvas').offset().top + 624) {
+            if (window.scrollY >= $('canvas').offset().top + 20) {
                 if (!$('canvas').hasClass('floating-box')) {
                     $('canvas').addClass('floating-box');
-                    window.scrollTo(0, 305);
+                    // window.scrollTo(0, 305);
                 }
             } else {
                 if ($('canvas').hasClass('floating-box') && window.scrollY <= 250) {
                     $('canvas').removeClass('floating-box');
-                    window.scrollTo(0, 860);
+                    // window.scrollTo(0, 860);
                 }
             }
         });
@@ -52,12 +52,9 @@ class Drawing extends React.Component {
 
     // Handle dropzone event
     handleDrop(files) {
-        console.log('Received files: ', files);
-        files.forEach((file, index) => {
-            console.log('Current preview', file.preview);
-
+        files.forEach((file) => {
             // Convert to data url for further manipulations
-            function convertFileToDataURLviaFileReader(url, callback){
+            function convertFileToDataURLviaFileReader(url, callback) {
                 let xhr = new XMLHttpRequest();
                 xhr.responseType = 'blob';
                 xhr.onload = () => {
@@ -74,7 +71,33 @@ class Drawing extends React.Component {
             // Convert and add display
             convertFileToDataURLviaFileReader(file.preview, (base64img) => {
                 this.loadImageToCanvas(base64img);
-                $('#dropzone').addClass('complete');
+                $('#dropzone').find('div').text('Drop new image');
+            });
+        });
+    }
+
+    // Handle dropzone event for branding
+    handleBrandingDrop(files) {
+        files.forEach((file) => {
+            // Convert to data url for further manipulations
+            function convertFileToDataURLviaFileReader(url, callback) {
+                let xhr = new XMLHttpRequest();
+                xhr.responseType = 'blob';
+                xhr.onload = () => {
+                    let reader  = new FileReader();
+                    reader.onloadend = () => {
+                        callback(reader.result);
+                    };
+                    reader.readAsDataURL(xhr.response);
+                };
+                xhr.open('GET', url);
+                xhr.send();
+            }
+
+            // Convert and add display
+            convertFileToDataURLviaFileReader(file.preview, (base64img) => {
+                this.handleBrandingChange('img', base64img);
+                $('#dropzoneB').addClass('complete');
             });
         });
     }
@@ -86,20 +109,20 @@ class Drawing extends React.Component {
         DrawingActions.updateImage(new Image());
 
         // Set editor dimensions
-        this.state.editor.height = 624;
-        this.state.editor.width = 1110;
+        this.state.editor.width = 1920;
+        this.state.editor.height = 1080;
 
         // load image
         this.state.img.src = base64img;
 
         // paste image to canvas
         this.state.img.onload = () => {
-            this.state.ctx.drawImage(this.state.img, 0, 0, 1110, 624);
+            this.state.ctx.drawImage(this.state.img, 0, 0, 1920, 1080);
         };
     }
 
     reloadCanvas() {
-        this.state.ctx.drawImage(this.state.img, 0, 0, 1110, 624);
+        this.state.ctx.drawImage(this.state.img, 0, 0, 1920, 1080);
     }
 
     redrawCanvas() {
@@ -109,8 +132,8 @@ class Drawing extends React.Component {
             this.reloadCanvas();
 
             // perform checks and draw stuff
-            if (this.state.opacity !== 0) {
-                this.drawOverlay(this.state.opacity);
+            if (this.state.overlay.opacity !== 0) {
+                this.drawOverlay(this.state.overlay.opacity, this.state.overlay.color);
             }
             if (this.state.vignette.opacity !== 0) {
                 this.drawVignette(this.state.vignette.size, this.state.vignette.opacity);
@@ -134,6 +157,10 @@ class Drawing extends React.Component {
                               this.state.subTitleShift,
                               2);
             }
+
+            if (this.state.branding.img) {
+                this.drawBranding(this.state.branding);
+            }
         }, 50);
     }
 
@@ -142,15 +169,15 @@ class Drawing extends React.Component {
         this.state.ctx.strokeStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 
         for (let i = border; i > 0; i--) {
-            this.state.ctx.strokeRect(padding + i, padding + i, 1110 - padding * 2 - i * 2, 624 - padding * 2 - i * 2);
+            this.state.ctx.strokeRect(padding + i, padding + i, 1920 - padding * 2 - i * 2, 1080 - padding * 2 - i * 2);
         }
     }
 
-    drawOverlay(opacity) {
+    drawOverlay(opacity, color) {
         // set fill color
-        this.state.ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+        this.state.ctx.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + opacity + ')';
 
-        this.state.ctx.fillRect(0, 0, 1110, 624);
+        this.state.ctx.fillRect(0, 0, 1920, 1080);
     }
 
     drawText(text, font, alignment, color, shift, position) {
@@ -173,23 +200,23 @@ class Drawing extends React.Component {
         };
         switch (alignment.horizontal) {
         case 'left':
-            pos.h = 40 + this.state.padding + this.state.border + shift.h;
-            pos.v = 312 + shift.v;
+            pos.h = 80 + this.state.padding + this.state.border + shift.h;
+            pos.v = 540 + shift.v;
             break;
 
         case 'center':
-            pos.h = 555 + shift.h;
-            pos.v = 312 + shift.v;
+            pos.h = 960 + shift.h;
+            pos.v = 540 + shift.v;
             break;
 
         case 'right':
-            pos.h = 1060 - this.state.padding - this.state.border + shift.h;
-            pos.v = 312 + shift.v;
+            pos.h = 1840 - this.state.padding - this.state.border + shift.h;
+            pos.v = 540 + shift.v;
             break;
 
         default:
-            pos.h = 555 + shift.h;
-            pos.v = 312 + shift.v;
+            pos.h = 960 + shift.h;
+            pos.v = 540 + shift.v;
             break;
         }
 
@@ -201,12 +228,47 @@ class Drawing extends React.Component {
     }
 
     drawVignette(size, opacity) {
-        let grd = this.state.ctx.createRadialGradient(555, 312, 400 - size, 555, 312, 800 - size);
+        let grd = this.state.ctx.createRadialGradient(960, 540, 600 - size, 960, 540, 1600 - size);
         grd.addColorStop(0, 'rgba(0,0,0,0)');
         grd.addColorStop(1, 'rgba(0,0,0,' + opacity + ')');
 
         this.state.ctx.fillStyle = grd;
-        this.state.ctx.fillRect(0, 0, 1110, 624);
+        this.state.ctx.fillRect(0, 0, 1920, 1080);
+    }
+
+    drawBranding(branding) {
+        this.state.ctx.globalAlpha = branding.opacity;
+        this.state.ctx.drawImage(branding.img,
+                                 branding.align === 'left' ?
+                                 branding.h
+                                 + this.state.padding
+                                 + this.state.border
+                                 + 80
+                                 :
+                                 1920
+                                 + branding.h
+                                 - branding.img.width
+                                 * branding.scale
+                                 - this.state.padding
+                                 - this.state.border
+                                 - 80,
+                                 branding.valign === 'top' ?
+                                 branding.v
+                                 + this.state.padding
+                                 + this.state.border
+                                 + 80
+                                 :
+                                 1080
+                                 + branding.v
+                                 - branding.img.height
+                                 * branding.scale
+                                 - this.state.padding
+                                 - this.state.border
+                                 - 80,
+                                 branding.img.width * branding.scale,
+                                 branding.img.height * branding.scale
+                                );
+        this.state.ctx.globalAlpha = 1;
     }
 
     downloadURI(uri, name) {
@@ -229,8 +291,18 @@ class Drawing extends React.Component {
         this.redrawCanvas();
     }
 
-    handleOverlayChange(value) {
-        DrawingActions.updateOpacity(value);
+    handleOverlayChange(type, value) {
+        if (type === 'opacity') {
+            DrawingActions.updateOverlay({
+                'opacity': value,
+                'color': this.state.overlay.color,
+            });
+        } else {
+            DrawingActions.updateOverlay({
+                'opacity': this.state.overlay.opacity,
+                'color': value.rgb,
+            });
+        }
         this.redrawCanvas();
     }
 
@@ -344,8 +416,62 @@ class Drawing extends React.Component {
         this.redrawCanvas();
     }
 
+    handleBrandingChange(type, value) {
+        switch (type) {
+
+        case 'img':
+            this.state.branding.img = new Image();
+            this.state.branding.img.src = value;
+            this.state.branding.img.onload = () => {
+                DrawingActions.updateBranding(this.state.branding);
+                this.redrawCanvas();
+            };
+            break;
+
+        case 'horizontal':
+            this.state.branding.h = value instanceof Object ? parseInt(value.target.value) : value;
+            break;
+
+        case 'vertical':
+            this.state.branding.v = value instanceof Object ? parseInt(value.target.value) : value;
+            break;
+
+        case 'opacity':
+            this.state.branding.opacity = value instanceof Object ? parseInt(value.target.value) : value;
+            break;
+
+        case 'align':
+            this.state.branding.align = value;
+            break;
+
+        case 'valign':
+            this.state.branding.valign = value;
+            break;
+
+        case 'scale':
+            this.state.branding.scale = value instanceof Object ? parseInt(value.target.value) : value;
+            break;
+
+        default:
+            break;
+        }
+
+        if (type !== 'img') {
+            DrawingActions.updateBranding(this.state.branding);
+            this.redrawCanvas();
+        }
+    }
+
+    handleMoveCanvas(state) {
+        if (state) {
+            $('canvas').addClass('moved');
+        } else {
+            $('canvas').removeClass('moved');
+        }
+    }
+
     handleSaveResult() {
-        this.downloadURI(this.state.editor.toDataURL('image/png'), 'thumbnail.png');
+        this.downloadURI(this.state.editor.toDataURL('image/jpeg', 0.8), 'thumbnail.jpg');
     }
 
     render() {
@@ -379,24 +505,14 @@ class Drawing extends React.Component {
                         {this.state.img &&
                             <div>
                                 <div className="col-md-6 col-lg-6 col-sm-12">
-                                    <div className="panel panel-default">
+                                    <div className="panel panel-default"
+                                    onMouseOver={this.handleMoveCanvas.bind(this, true)}
+                                    onMouseOut={this.handleMoveCanvas.bind(this, false)}
+                                    >
                                         <div className="panel-heading">
                                             Background options
                                         </div>
                                         <div className="panel-body">
-                                            <p>
-                                                Black overlay opacity
-                                            </p>
-
-                                            <Slider
-                                            value={this.state.opacity}
-                                            min={0}
-                                            max={1}
-                                            step={0.05}
-                                            orientation="horizontal"
-                                            onChange={this.handleOverlayChange.bind(this)}
-                                            />
-
                                             <p>
                                                 Vignette opacity
                                             </p>
@@ -415,11 +531,33 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.vignette.size}
-                                            min={-200}
-                                            max={200}
+                                            min={-400}
+                                            max={400}
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleVignetteChange.bind(this, 'size')}
+                                            />
+
+                                            <p>
+                                                Overlay opacity
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.overlay.opacity}
+                                            min={0}
+                                            max={1}
+                                            step={0.05}
+                                            orientation="horizontal"
+                                            onChange={this.handleOverlayChange.bind(this, 'opacity')}
+                                            />
+
+                                            <p>
+                                                Overlay color
+                                            </p>
+
+                                            <SketchPicker
+                                            color={this.state.overlay.color}
+                                            onChange={this.handleOverlayChange.bind(this, 'color')}
                                             />
 
                                         </div>
@@ -438,7 +576,7 @@ class Drawing extends React.Component {
                                             <Slider
                                             value={this.state.padding}
                                             min={0}
-                                            max={50}
+                                            max={100}
                                             step={1}
                                             orientation="horizontal"
                                             onChange={this.handlePaddingChange.bind(this)}
@@ -451,7 +589,7 @@ class Drawing extends React.Component {
                                             <Slider
                                             value={this.state.border}
                                             min={0}
-                                            max={50}
+                                            max={100}
                                             step={1}
                                             orientation="horizontal"
                                             onChange={this.handleBorderChange.bind(this)}
@@ -544,8 +682,8 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.titleShift.h}
-                                            min={-200}
-                                            max={200}
+                                            min={-400}
+                                            max={400}
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleTitleShiftChange.bind(this, 1)}
@@ -567,8 +705,8 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.titleShift.v}
-                                            min={-200}
-                                            max={200}
+                                            min={-400}
+                                            max={400}
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleTitleShiftChange.bind(this, 2)}
@@ -591,7 +729,7 @@ class Drawing extends React.Component {
                                             <Slider
                                             value={this.state.titleFontSize}
                                             min={10}
-                                            max={201}
+                                            max={402}
                                             step={3}
                                             orientation="horizontal"
                                             onChange={this.handleTitleFontChange.bind(this)}
@@ -644,7 +782,7 @@ class Drawing extends React.Component {
                                                         type="text"
                                                         className="form-control"
                                                         value={this.state.subTitleText}
-                                                        placeholder="First line of text e.g. your name"
+                                                        placeholder="Second line of text e.g. video title"
                                                         onChange={this.handleSubTitleTextChange.bind(this)}
                                                     />
                                                     <div className="input-group-btn aligments">
@@ -683,8 +821,8 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.subTitleShift.h}
-                                            min={-200}
-                                            max={200}
+                                            min={-400}
+                                            max={400}
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleSubTitleShiftChange.bind(this, 1)}
@@ -706,8 +844,8 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.subTitleShift.v}
-                                            min={-200}
-                                            max={200}
+                                            min={-400}
+                                            max={400}
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleSubTitleShiftChange.bind(this, 2)}
@@ -730,7 +868,7 @@ class Drawing extends React.Component {
                                             <Slider
                                             value={this.state.subTitleFontSize}
                                             min={10}
-                                            max={201}
+                                            max={402}
                                             step={3}
                                             orientation="horizontal"
                                             onChange={this.handleSubTitleFontChange.bind(this)}
@@ -743,6 +881,158 @@ class Drawing extends React.Component {
                                             <SketchPicker
                                             color={this.state.subTitleColor}
                                             onChange={this.handleSubTitleColorChange.bind(this)}
+                                            />
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="clearfix"></div>
+
+                                <div className="col-md-6 col-lg-6 col-sm-12">
+                                    <div className="panel panel-default">
+                                        <div className="panel-heading">
+                                            Branding options
+                                        </div>
+                                        <div className="panel-body">
+
+                                            <p>
+                                                Branding image
+                                            </p>
+
+                                            <Dropzone
+                                            id={'dropzoneB'}
+                                            className="dropzone"
+                                            onDrop={this.handleBrandingDrop.bind(this)}
+                                            accept="image/*"
+                                            >
+                                                <div>Drop an image</div>
+                                            </Dropzone>
+
+                                            <p>
+                                                Image horizontal alignment
+                                            </p>
+
+                                            <div className="btn-group">
+                                                <button
+                                                className="btn btn-default"
+                                                onClick={this.handleBrandingChange.bind(this, 'align', 'left')}
+                                                >
+                                                Left
+                                                </button>
+                                                <button
+                                                className="btn btn-default"
+                                                onClick={this.handleBrandingChange.bind(this, 'align', 'right')}
+                                                >
+                                                Right
+                                                </button>
+                                                <button
+                                                className="btn btn-default"
+                                                onClick={this.handleBrandingChange.bind(this, 'valign', 'top')}
+                                                >
+                                                Top
+                                                </button>
+                                                <button
+                                                className="btn btn-default"
+                                                onClick={this.handleBrandingChange.bind(this, 'valign', 'bottom')}
+                                                >
+                                                Bottom
+                                                </button>
+                                            </div>
+
+                                            <div className="clearfix"></div>
+                                            <br />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Image horizontal shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.branding.h}
+                                                    onChange={this.handleBrandingChange.bind(this, 'horizontal')}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.branding.h}
+                                            min={-400}
+                                            max={400}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleBrandingChange.bind(this, 'horizontal')}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Image vertical shift
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.branding.v}
+                                                    onChange={this.handleBrandingChange.bind(this, 'vertical')}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.branding.v}
+                                            min={-400}
+                                            max={400}
+                                            step={2}
+                                            orientation="horizontal"
+                                            onChange={this.handleBrandingChange.bind(this, 'vertical')}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Image opacity
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.branding.opacity}
+                                                    onChange={this.handleBrandingChange.bind(this, 'opacity')}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.branding.opacity}
+                                            min={0}
+                                            max={1}
+                                            step={0.1}
+                                            orientation="horizontal"
+                                            onChange={this.handleBrandingChange.bind(this, 'opacity')}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
+                                                        Image scale
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.branding.scale}
+                                                    onChange={this.handleBrandingChange.bind(this, 'scale')}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.branding.scale}
+                                            min={0}
+                                            max={3}
+                                            step={0.05}
+                                            orientation="horizontal"
+                                            onChange={this.handleBrandingChange.bind(this, 'scale')}
                                             />
 
                                         </div>

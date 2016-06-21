@@ -12,7 +12,7 @@ class DrawingActions {
             'updateImage',
             'updateContext',
             'updateEditor',
-            'updateOpacity',
+            'updateOverlay',
             'updateVignette',
             'updateTitleFontSize',
             'updateTitleText',
@@ -23,7 +23,8 @@ class DrawingActions {
             'updateSubTitleText',
             'updateSubTitleAlignment',
             'updateSubTitleColor',
-            'updateSubTitleShift'
+            'updateSubTitleShift',
+            'updateBranding'
         );
     }
 

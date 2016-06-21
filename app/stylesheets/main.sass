@@ -4,47 +4,47 @@
 
 @font-face
   font-family: 'Glyphicons Halflings'
-  src: url('/fonts/glyphicons-halflings-regular.eot')
-  src: url('/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
-  url('/fonts/glyphicons-halflings-regular.woff2') format('woff2'),
-  url('/fonts/glyphicons-halflings-regular.woff') format('woff'),
-  url('/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
-  url('/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
+  src: url('../fonts/glyphicons-halflings-regular.eot')
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+  url('../fonts/glyphicons-halflings-regular.woff2') format('woff2'),
+  url('../fonts/glyphicons-halflings-regular.woff') format('woff'),
+  url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+  url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg')
 
 @font-face
   font-family: 'Bebas Neue Thin'
-  src: url('/fonts/bebasneue_thin-webfont.woff2') format('woff2'),
-  url('/fonts/bebasneue_thin-webfont.woff') format('woff')
+  src: url('../fonts/bebasneue_thin-webfont.woff2') format('woff2'),
+  url('../fonts/bebasneue_thin-webfont.woff') format('woff')
 
 @font-face
   font-family: 'Bebas Neue'
-  src: url('/fonts/bebasneue_regular-webfont.woff2') format('woff2'),
-  url('/fonts/bebasneue_regular-webfont.woff') format('woff')
+  src: url('../fonts/bebasneue_regular-webfont.woff2') format('woff2'),
+  url('../fonts/bebasneue_regular-webfont.woff') format('woff')
 
 @font-face
   font-family: 'Bebas Neue Light'
-  src: url('/fonts/bebasneue_light-webfont.woff2') format('woff2'),
-  url('/fonts/bebasneue_light-webfont.woff') format('woff')
+  src: url('../fonts/bebasneue_light-webfont.woff2') format('woff2'),
+  url('../fonts/bebasneue_light-webfont.woff') format('woff')
 
 @font-face
   font-family: 'Bebas Neue Book'
-  src: url('/fonts/bebasneue_book-webfont.woff2') format('woff2'),
-  url('/fonts/bebasneue_book-webfont.woff') format('woff')
+  src: url('../fonts/bebasneue_book-webfont.woff2') format('woff2'),
+  url('../fonts/bebasneue_book-webfont.woff') format('woff')
 
 @font-face
   font-family: 'Bebas Neue Bold'
-  src: url('/fonts/bebasneue_bold-webfont.woff2') format('woff2'),
-  url('/fonts/bebasneue_bold-webfont.woff') format('woff')
+  src: url('../fonts/bebasneue_bold-webfont.woff2') format('woff2'),
+  url('../fonts/bebasneue_bold-webfont.woff') format('woff')
 
-$bebas: 'Bebas Neue'
-$bebas-thin: 'Bebas Neue Thin'
-$bebas-light: 'Bebas Neue Light'
-$bebas-book: 'Bebas Neue Book'
-$bebas-bold: 'Bebas Neue Bold'
+$bebas: 'Roboto'
+$bebas-thin: 'Roboto'
+$bebas-light: 'Roboto'
+$bebas-book: 'Roboto'
+$bebas-bold: 'Roboto'
 
 body
   margin: 0
-  background: url('/img/bg.png')
+  background: url('../img/bg.png')
   background-attachment: fixed
   background-size: cover
   background-repeat: no-repeat
@@ -61,6 +61,7 @@ body
     text-transform: uppercase
     color: #000
     font-family: $bebas-bold, sans-serif
+    font-weight: bold
 
     span
       position: relative
@@ -205,14 +206,22 @@ body
     max-width: 100%
 
 // Canvas
-.floating-box
-  position: fixed
-  top: -226px
-  left: -393px
-  z-index: 100
-  border: 6px solid #fff
-  box-shadow: 0 0 10px rgba(0,0,0,0.8)
-  transform: scale(0.3,0.3)
+canvas
+  width: 100%
+  
+  &.floating-box
+    position: fixed
+    top: 0
+    left: 0
+    width: 320px
+    z-index: 100
+    border: 3px solid #fff
+    box-shadow: 0 0 10px rgba(0,0,0,0.8)
+
+    &.moved
+      top: auto
+      bottom: 0
+
 
 /* Bootstrap Restyles */
 .panel, .list-group, .liveFeed
@@ -234,16 +243,19 @@ body
 
   .panel-heading
     font-size: 20px
+    font-weight: bold
 
     .panel-title
       font-family: $bebas-bold
+      font-weight: bold
       font-size: 24px
 
   .panel-body
     
     p
       font-family: $bebas-book, sans-serif
-      font-size: 18px
+      font-size: 16px
+      font-weight: bold
 
 .aligments
 
@@ -254,7 +266,7 @@ body
 
   label
     margin-right: 10px
-    font-size: 18px
+    font-size: 16px
 
 
 /* Modal */
