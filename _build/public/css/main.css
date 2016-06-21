@@ -6508,7 +6508,8 @@ canvas {
 
 .panel .panel-body p {
   font-family: "Roboto", sans-serif;
-  font-size: 18px; }
+  font-size: 16px;
+  font-weight: bold; }
 
 .aligments .btn {
   height: 34px; }

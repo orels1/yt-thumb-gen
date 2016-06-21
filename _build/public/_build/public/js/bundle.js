@@ -22,7 +22,7 @@ var DrawingActions = function () {
     function DrawingActions() {
         _classCallCheck(this, DrawingActions);
 
-        this.generateActions('updatePadding', 'updateBorder', 'updateFrameColor', 'updateImage', 'updateContext', 'updateEditor', 'updateOpacity', 'updateVignette', 'updateTitleFontSize', 'updateTitleText', 'updateTitleAlignment', 'updateTitleColor', 'updateTitleShift', 'updateSubTitleFontSize', 'updateSubTitleText', 'updateSubTitleAlignment', 'updateSubTitleColor', 'updateSubTitleShift');
+        this.generateActions('updatePadding', 'updateBorder', 'updateFrameColor', 'updateImage', 'updateContext', 'updateEditor', 'updateOverlay', 'updateVignette', 'updateTitleFontSize', 'updateTitleText', 'updateTitleAlignment', 'updateTitleColor', 'updateTitleShift', 'updateSubTitleFontSize', 'updateSubTitleText', 'updateSubTitleAlignment', 'updateSubTitleColor', 'updateSubTitleShift');
     }
 
     _createClass(DrawingActions, [{
@@ -293,12 +293,12 @@ var Drawing = function (_React$Component) {
                 if (window.scrollY >= $('canvas').offset().top + 20) {
                     if (!$('canvas').hasClass('floating-box')) {
                         $('canvas').addClass('floating-box');
-                        //window.scrollTo(0, 305);
+                        // window.scrollTo(0, 305);
                     }
                 } else {
-                        if ($('canvas').hasClass('floating-box') && window.scrollY <= 300) {
+                        if ($('canvas').hasClass('floating-box') && window.scrollY <= 250) {
                             $('canvas').removeClass('floating-box');
-                            //window.scrollTo(0, 860);
+                            // window.scrollTo(0, 860);
                         }
                     }
             });
@@ -360,21 +360,21 @@ var Drawing = function (_React$Component) {
             _DrawingActions2.default.updateImage(new Image());
 
             // Set editor dimensions
-            this.state.editor.height = 624;
-            this.state.editor.width = 1110;
+            this.state.editor.width = 1920;
+            this.state.editor.height = 1080;
 
             // load image
             this.state.img.src = base64img;
 
             // paste image to canvas
             this.state.img.onload = function () {
-                _this3.state.ctx.drawImage(_this3.state.img, 0, 0, 1110, 624);
+                _this3.state.ctx.drawImage(_this3.state.img, 0, 0, 1920, 1080);
             };
         }
     }, {
         key: 'reloadCanvas',
         value: function reloadCanvas() {
-            this.state.ctx.drawImage(this.state.img, 0, 0, 1110, 624);
+            this.state.ctx.drawImage(this.state.img, 0, 0, 1920, 1080);
         }
     }, {
         key: 'redrawCanvas',
@@ -387,8 +387,8 @@ var Drawing = function (_React$Component) {
                 _this4.reloadCanvas();
 
                 // perform checks and draw stuff
-                if (_this4.state.opacity !== 0) {
-                    _this4.drawOverlay(_this4.state.opacity);
+                if (_this4.state.overlay.opacity !== 0) {
+                    _this4.drawOverlay(_this4.state.overlay.opacity, _this4.state.overlay.color);
                 }
                 if (_this4.state.vignette.opacity !== 0) {
                     _this4.drawVignette(_this4.state.vignette.size, _this4.state.vignette.opacity);
@@ -411,16 +411,16 @@ var Drawing = function (_React$Component) {
             this.state.ctx.strokeStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
 
             for (var i = border; i > 0; i--) {
-                this.state.ctx.strokeRect(padding + i, padding + i, 1110 - padding * 2 - i * 2, 624 - padding * 2 - i * 2);
+                this.state.ctx.strokeRect(padding + i, padding + i, 1920 - padding * 2 - i * 2, 1080 - padding * 2 - i * 2);
             }
         }
     }, {
         key: 'drawOverlay',
-        value: function drawOverlay(opacity) {
+        value: function drawOverlay(opacity, color) {
             // set fill color
-            this.state.ctx.fillStyle = 'rgba(0,0,0,' + opacity + ')';
+            this.state.ctx.fillStyle = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + opacity + ')';
 
-            this.state.ctx.fillRect(0, 0, 1110, 624);
+            this.state.ctx.fillRect(0, 0, 1920, 1080);
         }
     }, {
         key: 'drawText',
@@ -444,23 +444,23 @@ var Drawing = function (_React$Component) {
             };
             switch (alignment.horizontal) {
                 case 'left':
-                    pos.h = 40 + this.state.padding + this.state.border + shift.h;
-                    pos.v = 312 + shift.v;
+                    pos.h = 80 + this.state.padding + this.state.border + shift.h;
+                    pos.v = 540 + shift.v;
                     break;
 
                 case 'center':
-                    pos.h = 555 + shift.h;
-                    pos.v = 312 + shift.v;
+                    pos.h = 960 + shift.h;
+                    pos.v = 540 + shift.v;
                     break;
 
                 case 'right':
-                    pos.h = 1060 - this.state.padding - this.state.border + shift.h;
-                    pos.v = 312 + shift.v;
+                    pos.h = 1840 - this.state.padding - this.state.border + shift.h;
+                    pos.v = 540 + shift.v;
                     break;
 
                 default:
-                    pos.h = 555 + shift.h;
-                    pos.v = 312 + shift.v;
+                    pos.h = 960 + shift.h;
+                    pos.v = 540 + shift.v;
                     break;
             }
 
@@ -473,12 +473,12 @@ var Drawing = function (_React$Component) {
     }, {
         key: 'drawVignette',
         value: function drawVignette(size, opacity) {
-            var grd = this.state.ctx.createRadialGradient(555, 312, 400 - size, 555, 312, 800 - size);
+            var grd = this.state.ctx.createRadialGradient(960, 540, 600 - size, 960, 540, 1600 - size);
             grd.addColorStop(0, 'rgba(0,0,0,0)');
             grd.addColorStop(1, 'rgba(0,0,0,' + opacity + ')');
 
             this.state.ctx.fillStyle = grd;
-            this.state.ctx.fillRect(0, 0, 1110, 624);
+            this.state.ctx.fillRect(0, 0, 1920, 1080);
         }
     }, {
         key: 'downloadURI',
@@ -505,8 +505,18 @@ var Drawing = function (_React$Component) {
         }
     }, {
         key: 'handleOverlayChange',
-        value: function handleOverlayChange(value) {
-            _DrawingActions2.default.updateOpacity(value);
+        value: function handleOverlayChange(type, value) {
+            if (type === 'opacity') {
+                _DrawingActions2.default.updateOverlay({
+                    'opacity': value,
+                    'color': this.state.overlay.color
+                });
+            } else {
+                _DrawingActions2.default.updateOverlay({
+                    'opacity': this.state.overlay.opacity,
+                    'color': value.rgb
+                });
+            }
             this.redrawCanvas();
         }
     }, {
@@ -632,9 +642,18 @@ var Drawing = function (_React$Component) {
             this.redrawCanvas();
         }
     }, {
+        key: 'handleMoveCanvas',
+        value: function handleMoveCanvas(state) {
+            if (state) {
+                $('canvas').addClass('moved');
+            } else {
+                $('canvas').removeClass('moved');
+            }
+        }
+    }, {
         key: 'handleSaveResult',
         value: function handleSaveResult() {
-            this.downloadURI(this.state.editor.toDataURL('image/png'), 'thumbnail.png');
+            this.downloadURI(this.state.editor.toDataURL('image/jpeg', 0.8), 'thumbnail.jpg');
         }
     }, {
         key: 'render',
@@ -691,7 +710,10 @@ var Drawing = function (_React$Component) {
                                 { className: 'col-md-6 col-lg-6 col-sm-12' },
                                 _react2.default.createElement(
                                     'div',
-                                    { className: 'panel panel-default' },
+                                    { className: 'panel panel-default',
+                                        onMouseOver: this.handleMoveCanvas.bind(this, true),
+                                        onMouseOut: this.handleMoveCanvas.bind(this, false)
+                                    },
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'panel-heading' },
@@ -700,19 +722,6 @@ var Drawing = function (_React$Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'panel-body' },
-                                        _react2.default.createElement(
-                                            'p',
-                                            null,
-                                            'Black overlay opacity'
-                                        ),
-                                        _react2.default.createElement(_reactRangeslider2.default, {
-                                            value: this.state.opacity,
-                                            min: 0,
-                                            max: 1,
-                                            step: 0.05,
-                                            orientation: 'horizontal',
-                                            onChange: this.handleOverlayChange.bind(this)
-                                        }),
                                         _react2.default.createElement(
                                             'p',
                                             null,
@@ -733,11 +742,33 @@ var Drawing = function (_React$Component) {
                                         ),
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.vignette.size,
-                                            min: -200,
-                                            max: 200,
+                                            min: -400,
+                                            max: 400,
                                             step: 2,
                                             orientation: 'horizontal',
                                             onChange: this.handleVignetteChange.bind(this, 'size')
+                                        }),
+                                        _react2.default.createElement(
+                                            'p',
+                                            null,
+                                            'Overlay opacity'
+                                        ),
+                                        _react2.default.createElement(_reactRangeslider2.default, {
+                                            value: this.state.overlay.opacity,
+                                            min: 0,
+                                            max: 1,
+                                            step: 0.05,
+                                            orientation: 'horizontal',
+                                            onChange: this.handleOverlayChange.bind(this, 'opacity')
+                                        }),
+                                        _react2.default.createElement(
+                                            'p',
+                                            null,
+                                            'Overlay color'
+                                        ),
+                                        _react2.default.createElement(_reactColor.SketchPicker, {
+                                            color: this.state.overlay.color,
+                                            onChange: this.handleOverlayChange.bind(this, 'color')
                                         })
                                     )
                                 )
@@ -764,7 +795,7 @@ var Drawing = function (_React$Component) {
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.padding,
                                             min: 0,
-                                            max: 50,
+                                            max: 100,
                                             step: 1,
                                             orientation: 'horizontal',
                                             onChange: this.handlePaddingChange.bind(this)
@@ -777,7 +808,7 @@ var Drawing = function (_React$Component) {
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.border,
                                             min: 0,
-                                            max: 50,
+                                            max: 100,
                                             step: 1,
                                             orientation: 'horizontal',
                                             onChange: this.handleBorderChange.bind(this)
@@ -900,8 +931,8 @@ var Drawing = function (_React$Component) {
                                         ),
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.titleShift.h,
-                                            min: -200,
-                                            max: 200,
+                                            min: -400,
+                                            max: 400,
                                             step: 2,
                                             orientation: 'horizontal',
                                             onChange: this.handleTitleShiftChange.bind(this, 1)
@@ -927,8 +958,8 @@ var Drawing = function (_React$Component) {
                                         ),
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.titleShift.v,
-                                            min: -200,
-                                            max: 200,
+                                            min: -400,
+                                            max: 400,
                                             step: 2,
                                             orientation: 'horizontal',
                                             onChange: this.handleTitleShiftChange.bind(this, 2)
@@ -955,7 +986,7 @@ var Drawing = function (_React$Component) {
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.titleFontSize,
                                             min: 10,
-                                            max: 201,
+                                            max: 402,
                                             step: 3,
                                             orientation: 'horizontal',
                                             onChange: this.handleTitleFontChange.bind(this)
@@ -1026,7 +1057,7 @@ var Drawing = function (_React$Component) {
                                                     type: 'text',
                                                     className: 'form-control',
                                                     value: this.state.subTitleText,
-                                                    placeholder: 'First line of text e.g. your name',
+                                                    placeholder: 'Second line of text e.g. video title',
                                                     onChange: this.handleSubTitleTextChange.bind(this)
                                                 }),
                                                 _react2.default.createElement(
@@ -1077,8 +1108,8 @@ var Drawing = function (_React$Component) {
                                         ),
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.subTitleShift.h,
-                                            min: -200,
-                                            max: 200,
+                                            min: -400,
+                                            max: 400,
                                             step: 2,
                                             orientation: 'horizontal',
                                             onChange: this.handleSubTitleShiftChange.bind(this, 1)
@@ -1104,8 +1135,8 @@ var Drawing = function (_React$Component) {
                                         ),
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.subTitleShift.v,
-                                            min: -200,
-                                            max: 200,
+                                            min: -400,
+                                            max: 400,
                                             step: 2,
                                             orientation: 'horizontal',
                                             onChange: this.handleSubTitleShiftChange.bind(this, 2)
@@ -1132,7 +1163,7 @@ var Drawing = function (_React$Component) {
                                         _react2.default.createElement(_reactRangeslider2.default, {
                                             value: this.state.subTitleFontSize,
                                             min: 10,
-                                            max: 201,
+                                            max: 402,
                                             step: 3,
                                             orientation: 'horizontal',
                                             onChange: this.handleSubTitleFontChange.bind(this)
@@ -1528,7 +1559,15 @@ var DrawingStore = function () {
         };
         this.padding = 0;
         this.border = 0;
-        this.opacity = 0;
+        this.overlay = {
+            'opacity': 0,
+            'color': {
+                'r': 0,
+                'g': 0,
+                'b': 0,
+                'a': 0
+            }
+        };
         this.vignette = {
             'opacity': 0,
             'size': 0
@@ -1598,9 +1637,9 @@ var DrawingStore = function () {
             this.editor = value;
         }
     }, {
-        key: 'onUpdateOpacity',
-        value: function onUpdateOpacity(value) {
-            this.opacity = value;
+        key: 'onUpdateOverlay',
+        value: function onUpdateOverlay(value) {
+            this.overlay = value;
         }
     }, {
         key: 'onUpdateVignette',

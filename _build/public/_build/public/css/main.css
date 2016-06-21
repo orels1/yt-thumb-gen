@@ -6334,11 +6334,11 @@ button.toast-close-button {
 
 body {
   margin: 0;
-  background: url("/img/bg.png");
+  background: url("../img/bg.png");
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
-  font-family: "Bebas Neue"; }
+  font-family: "Roboto"; }
 
 .navbar {
   background: #fff;
@@ -6347,7 +6347,8 @@ body {
   .navbar .navbar-brand {
     text-transform: uppercase;
     color: #000;
-    font-family: "Bebas Neue Bold", sans-serif; }
+    font-family: "Roboto", sans-serif;
+    font-weight: bold; }
     .navbar .navbar-brand span {
       position: relative;
       top: -3px;
@@ -6467,15 +6468,19 @@ body {
 #drop img {
   max-width: 100%; }
 
-.floating-box {
-  position: fixed;
-  top: -224px;
-  left: -394px;
-  z-index: 100;
-  border: 8px solid #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-  -webkit-transform: scale(0.3, 0.3);
-          transform: scale(0.3, 0.3); }
+canvas {
+  width: 100%; }
+  canvas.floating-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    z-index: 100;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8); }
+    canvas.floating-box.moved {
+      top: auto;
+      bottom: 0; }
 
 /* Bootstrap Restyles */
 .panel, .list-group, .liveFeed {
@@ -6494,13 +6499,15 @@ body {
   margin-right: 0 !important; }
 
 .panel .panel-heading {
-  font-size: 20px; }
+  font-size: 20px;
+  font-weight: bold; }
   .panel .panel-heading .panel-title {
-    font-family: "Bebas Neue Bold";
+    font-family: "Roboto";
+    font-weight: bold;
     font-size: 24px; }
 
 .panel .panel-body p {
-  font-family: "Bebas Neue Book", sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 18px; }
 
 .aligments .btn {
@@ -6508,7 +6515,7 @@ body {
 
 .panel label {
   margin-right: 10px;
-  font-size: 18px; }
+  font-size: 16px; }
 
 /* Modal */
 .Modal__Bootstrap.modal-dialog {

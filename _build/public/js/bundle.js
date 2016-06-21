@@ -22,7 +22,7 @@ var DrawingActions = function () {
     function DrawingActions() {
         _classCallCheck(this, DrawingActions);
 
-        this.generateActions('updatePadding', 'updateBorder', 'updateFrameColor', 'updateImage', 'updateContext', 'updateEditor', 'updateOverlay', 'updateVignette', 'updateTitleFontSize', 'updateTitleText', 'updateTitleAlignment', 'updateTitleColor', 'updateTitleShift', 'updateSubTitleFontSize', 'updateSubTitleText', 'updateSubTitleAlignment', 'updateSubTitleColor', 'updateSubTitleShift');
+        this.generateActions('updatePadding', 'updateBorder', 'updateFrameColor', 'updateImage', 'updateContext', 'updateEditor', 'updateOverlay', 'updateVignette', 'updateTitleFontSize', 'updateTitleText', 'updateTitleAlignment', 'updateTitleColor', 'updateTitleShift', 'updateSubTitleFontSize', 'updateSubTitleText', 'updateSubTitleAlignment', 'updateSubTitleColor', 'updateSubTitleShift', 'updateBranding');
     }
 
     _createClass(DrawingActions, [{
@@ -323,10 +323,7 @@ var Drawing = function (_React$Component) {
         value: function handleDrop(files) {
             var _this2 = this;
 
-            console.log('Received files: ', files);
-            files.forEach(function (file, index) {
-                console.log('Current preview', file.preview);
-
+            files.forEach(function (file) {
                 // Convert to data url for further manipulations
                 function convertFileToDataURLviaFileReader(url, callback) {
                     var xhr = new XMLHttpRequest();
@@ -345,14 +342,45 @@ var Drawing = function (_React$Component) {
                 // Convert and add display
                 convertFileToDataURLviaFileReader(file.preview, function (base64img) {
                     _this2.loadImageToCanvas(base64img);
-                    $('#dropzone').addClass('complete');
+                    $('#dropzone').find('div').text('Drop new image');
+                });
+            });
+        }
+
+        // Handle dropzone event for branding
+
+    }, {
+        key: 'handleBrandingDrop',
+        value: function handleBrandingDrop(files) {
+            var _this3 = this;
+
+            files.forEach(function (file) {
+                // Convert to data url for further manipulations
+                function convertFileToDataURLviaFileReader(url, callback) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = function () {
+                        var reader = new FileReader();
+                        reader.onloadend = function () {
+                            callback(reader.result);
+                        };
+                        reader.readAsDataURL(xhr.response);
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+                }
+
+                // Convert and add display
+                convertFileToDataURLviaFileReader(file.preview, function (base64img) {
+                    _this3.handleBrandingChange('img', base64img);
+                    $('#dropzoneB').addClass('complete');
                 });
             });
         }
     }, {
         key: 'loadImageToCanvas',
         value: function loadImageToCanvas(base64img) {
-            var _this3 = this;
+            var _this4 = this;
 
             // Get holder
             _DrawingActions2.default.updateEditor($('#editor')[0]);
@@ -368,7 +396,7 @@ var Drawing = function (_React$Component) {
 
             // paste image to canvas
             this.state.img.onload = function () {
-                _this3.state.ctx.drawImage(_this3.state.img, 0, 0, 1920, 1080);
+                _this4.state.ctx.drawImage(_this4.state.img, 0, 0, 1920, 1080);
             };
         }
     }, {
@@ -379,28 +407,32 @@ var Drawing = function (_React$Component) {
     }, {
         key: 'redrawCanvas',
         value: function redrawCanvas() {
-            var _this4 = this;
+            var _this5 = this;
 
             // wait a bit for complex values
             setTimeout(function () {
                 // clear canvas first
-                _this4.reloadCanvas();
+                _this5.reloadCanvas();
 
                 // perform checks and draw stuff
-                if (_this4.state.overlay.opacity !== 0) {
-                    _this4.drawOverlay(_this4.state.overlay.opacity, _this4.state.overlay.color);
+                if (_this5.state.overlay.opacity !== 0) {
+                    _this5.drawOverlay(_this5.state.overlay.opacity, _this5.state.overlay.color);
                 }
-                if (_this4.state.vignette.opacity !== 0) {
-                    _this4.drawVignette(_this4.state.vignette.size, _this4.state.vignette.opacity);
+                if (_this5.state.vignette.opacity !== 0) {
+                    _this5.drawVignette(_this5.state.vignette.size, _this5.state.vignette.opacity);
                 }
-                if (_this4.state.border !== 0) {
-                    _this4.drawFrame(_this4.state.border, _this4.state.padding, _this4.state.frameColor);
+                if (_this5.state.border !== 0) {
+                    _this5.drawFrame(_this5.state.border, _this5.state.padding, _this5.state.frameColor);
                 }
-                if (_this4.state.titleText.length !== 0) {
-                    _this4.drawText(_this4.state.titleText, _this4.state.titleFontSize, _this4.state.titleAlignment, _this4.state.titleColor, _this4.state.titleShift, 1);
+                if (_this5.state.titleText.length !== 0) {
+                    _this5.drawText(_this5.state.titleText, _this5.state.titleFontSize, _this5.state.titleAlignment, _this5.state.titleColor, _this5.state.titleShift, 1);
                 }
-                if (_this4.state.subTitleText.length !== 0) {
-                    _this4.drawText(_this4.state.subTitleText, _this4.state.subTitleFontSize, _this4.state.subTitleAlignment, _this4.state.subTitleColor, _this4.state.subTitleShift, 2);
+                if (_this5.state.subTitleText.length !== 0) {
+                    _this5.drawText(_this5.state.subTitleText, _this5.state.subTitleFontSize, _this5.state.subTitleAlignment, _this5.state.subTitleColor, _this5.state.subTitleShift, 2);
+                }
+
+                if (_this5.state.branding.img) {
+                    _this5.drawBranding(_this5.state.branding);
                 }
             }, 50);
         }
@@ -479,6 +511,13 @@ var Drawing = function (_React$Component) {
 
             this.state.ctx.fillStyle = grd;
             this.state.ctx.fillRect(0, 0, 1920, 1080);
+        }
+    }, {
+        key: 'drawBranding',
+        value: function drawBranding(branding) {
+            this.state.ctx.globalAlpha = branding.opacity;
+            this.state.ctx.drawImage(branding.img, branding.align === 'left' ? branding.h + this.state.padding + this.state.border + 80 : 1920 + branding.h - branding.img.width * branding.scale - this.state.padding - this.state.border - 80, branding.valign === 'top' ? branding.v + this.state.padding + this.state.border + 80 : 1080 + branding.v - branding.img.height * branding.scale - this.state.padding - this.state.border - 80, branding.img.width * branding.scale, branding.img.height * branding.scale);
+            this.state.ctx.globalAlpha = 1;
         }
     }, {
         key: 'downloadURI',
@@ -640,6 +679,55 @@ var Drawing = function (_React$Component) {
                 });
             }
             this.redrawCanvas();
+        }
+    }, {
+        key: 'handleBrandingChange',
+        value: function handleBrandingChange(type, value) {
+            var _this6 = this;
+
+            switch (type) {
+
+                case 'img':
+                    this.state.branding.img = new Image();
+                    this.state.branding.img.src = value;
+                    this.state.branding.img.onload = function () {
+                        _DrawingActions2.default.updateBranding(_this6.state.branding);
+                        _this6.redrawCanvas();
+                    };
+                    break;
+
+                case 'horizontal':
+                    this.state.branding.h = value instanceof Object ? parseInt(value.target.value) : value;
+                    break;
+
+                case 'vertical':
+                    this.state.branding.v = value instanceof Object ? parseInt(value.target.value) : value;
+                    break;
+
+                case 'opacity':
+                    this.state.branding.opacity = value instanceof Object ? parseInt(value.target.value) : value;
+                    break;
+
+                case 'align':
+                    this.state.branding.align = value;
+                    break;
+
+                case 'valign':
+                    this.state.branding.valign = value;
+                    break;
+
+                case 'scale':
+                    this.state.branding.scale = value instanceof Object ? parseInt(value.target.value) : value;
+                    break;
+
+                default:
+                    break;
+            }
+
+            if (type !== 'img') {
+                _DrawingActions2.default.updateBranding(this.state.branding);
+                this.redrawCanvas();
+            }
         }
     }, {
         key: 'handleMoveCanvas',
@@ -1179,15 +1267,208 @@ var Drawing = function (_React$Component) {
                                         })
                                     )
                                 )
+                            ),
+                            _react2.default.createElement('div', { className: 'clearfix' }),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'col-md-6 col-lg-6 col-sm-12' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'panel panel-default' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'panel-heading' },
+                                        'Branding options'
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'panel-body' },
+                                        _react2.default.createElement(
+                                            'p',
+                                            null,
+                                            'Branding image'
+                                        ),
+                                        _react2.default.createElement(
+                                            _reactDropzone2.default,
+                                            {
+                                                id: 'dropzoneB',
+                                                className: 'dropzone',
+                                                onDrop: this.handleBrandingDrop.bind(this),
+                                                accept: 'image/*'
+                                            },
+                                            _react2.default.createElement(
+                                                'div',
+                                                null,
+                                                'Drop an image'
+                                            )
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            null,
+                                            'Image alignment'
+                                        ),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'btn-group' },
+                                            _react2.default.createElement(
+                                                'button',
+                                                {
+                                                    className: 'btn btn-default',
+                                                    onClick: this.handleBrandingChange.bind(this, 'align', 'left')
+                                                },
+                                                'Left'
+                                            ),
+                                            _react2.default.createElement(
+                                                'button',
+                                                {
+                                                    className: 'btn btn-default',
+                                                    onClick: this.handleBrandingChange.bind(this, 'align', 'right')
+                                                },
+                                                'Right'
+                                            ),
+                                            _react2.default.createElement(
+                                                'button',
+                                                {
+                                                    className: 'btn btn-default',
+                                                    onClick: this.handleBrandingChange.bind(this, 'valign', 'top')
+                                                },
+                                                'Top'
+                                            ),
+                                            _react2.default.createElement(
+                                                'button',
+                                                {
+                                                    className: 'btn btn-default',
+                                                    onClick: this.handleBrandingChange.bind(this, 'valign', 'bottom')
+                                                },
+                                                'Bottom'
+                                            )
+                                        ),
+                                        _react2.default.createElement('div', { className: 'clearfix' }),
+                                        _react2.default.createElement('br', null),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'form-inline' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'form-group' },
+                                                _react2.default.createElement(
+                                                    'label',
+                                                    null,
+                                                    'Image horizontal shift'
+                                                ),
+                                                _react2.default.createElement('input', {
+                                                    type: 'text',
+                                                    className: 'form-control',
+                                                    value: this.state.branding.h,
+                                                    onChange: this.handleBrandingChange.bind(this, 'horizontal')
+                                                })
+                                            )
+                                        ),
+                                        _react2.default.createElement(_reactRangeslider2.default, {
+                                            value: this.state.branding.h,
+                                            min: -400,
+                                            max: 400,
+                                            step: 2,
+                                            orientation: 'horizontal',
+                                            onChange: this.handleBrandingChange.bind(this, 'horizontal')
+                                        }),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'form-inline' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'form-group' },
+                                                _react2.default.createElement(
+                                                    'label',
+                                                    null,
+                                                    'Image vertical shift'
+                                                ),
+                                                _react2.default.createElement('input', {
+                                                    type: 'text',
+                                                    className: 'form-control',
+                                                    value: this.state.branding.v,
+                                                    onChange: this.handleBrandingChange.bind(this, 'vertical')
+                                                })
+                                            )
+                                        ),
+                                        _react2.default.createElement(_reactRangeslider2.default, {
+                                            value: this.state.branding.v,
+                                            min: -400,
+                                            max: 400,
+                                            step: 2,
+                                            orientation: 'horizontal',
+                                            onChange: this.handleBrandingChange.bind(this, 'vertical')
+                                        }),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'form-inline' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'form-group' },
+                                                _react2.default.createElement(
+                                                    'label',
+                                                    null,
+                                                    'Image opacity'
+                                                ),
+                                                _react2.default.createElement('input', {
+                                                    type: 'text',
+                                                    className: 'form-control',
+                                                    value: this.state.branding.opacity,
+                                                    onChange: this.handleBrandingChange.bind(this, 'opacity')
+                                                })
+                                            )
+                                        ),
+                                        _react2.default.createElement(_reactRangeslider2.default, {
+                                            value: this.state.branding.opacity,
+                                            min: 0,
+                                            max: 1,
+                                            step: 0.1,
+                                            orientation: 'horizontal',
+                                            onChange: this.handleBrandingChange.bind(this, 'opacity')
+                                        }),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'form-inline' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'form-group' },
+                                                _react2.default.createElement(
+                                                    'label',
+                                                    null,
+                                                    'Image scale'
+                                                ),
+                                                _react2.default.createElement('input', {
+                                                    type: 'text',
+                                                    className: 'form-control',
+                                                    value: this.state.branding.scale,
+                                                    onChange: this.handleBrandingChange.bind(this, 'scale')
+                                                })
+                                            )
+                                        ),
+                                        _react2.default.createElement(_reactRangeslider2.default, {
+                                            value: this.state.branding.scale,
+                                            min: 0,
+                                            max: 3,
+                                            step: 0.05,
+                                            orientation: 'horizontal',
+                                            onChange: this.handleBrandingChange.bind(this, 'scale')
+                                        })
+                                    )
+                                )
                             )
                         ),
                         this.state.img && _react2.default.createElement(
                             'div',
-                            { className: 'align-center' },
+                            null,
+                            _react2.default.createElement('div', { className: 'clearfix' }),
                             _react2.default.createElement(
-                                'button',
-                                { className: 'btn btn-primary', onClick: this.handleSaveResult.bind(this) },
-                                'Save result'
+                                'div',
+                                { className: 'align-center' },
+                                _react2.default.createElement(
+                                    'button',
+                                    { className: 'btn btn-primary', style: { 'width': '100%' }, onClick: this.handleSaveResult.bind(this) },
+                                    'Save result'
+                                )
                             )
                         )
                     )
@@ -1604,6 +1885,15 @@ var DrawingStore = function () {
             'h': 0,
             'v': 0
         };
+        this.branding = {
+            'img': null,
+            'h': 0,
+            'v': 0,
+            'opacity': 1,
+            'scale': 1,
+            'align': 'left',
+            'valign': 'top'
+        };
     }
 
     _createClass(DrawingStore, [{
@@ -1695,6 +1985,11 @@ var DrawingStore = function () {
         key: 'onUpdateSubTitleShift',
         value: function onUpdateSubTitleShift(value) {
             this.subTitleShift = value;
+        }
+    }, {
+        key: 'onUpdateBranding',
+        value: function onUpdateBranding(value) {
+            this.branding = value;
         }
     }]);
 
