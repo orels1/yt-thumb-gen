@@ -12,7 +12,7 @@ After that just fire up gulp with `gulp default` and launch dev server with `npm
 
 ## Build
 
-Because the tool is client sided - you can deploy it as a static page pretty easily. Simply copy run `gulp build` and when it's done - copy your `public` folder into `_build` subdirectory.
+Because the tool is client sided - you can deploy it as a static page pretty easily. Simply copy run `gulp build` and when it's done - copy your `public` folder into `_build` subdirectory. Then change the title and meta tags inside `index.html` to your liking and you're done! Simply upload the contents of `_build` directory to your webserver and open it up.
 
 ## Deploy to Heroku
 
