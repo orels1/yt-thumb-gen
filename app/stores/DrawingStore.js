@@ -26,9 +26,9 @@ class DrawingStore {
         };
         this.vignette = {
             'opacity': 0,
-            'size': 0,
+            'size': 400,
         };
-        this.titleFontSize = 30;
+        this.titleFontSize = 150;
         this.titleText = '';
         this.titleAlignment = {
             'horizontal': 'center',
@@ -44,7 +44,7 @@ class DrawingStore {
             'h': 0,
             'v': 0,
         };
-        this.subTitleFontSize = 30;
+        this.subTitleFontSize = 150;
         this.subTitleText = '';
         this.subTitleAlignment = {
             'horizontal': 'center',

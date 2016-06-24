@@ -1691,8 +1691,8 @@ var Navbar = function (_React$Component) {
                             _react2.default.createElement('span', { className: 'icon-bar' })
                         ),
                         _react2.default.createElement(
-                            _reactRouter.Link,
-                            { to: '/', className: 'navbar-brand' },
+                            'a',
+                            { href: '/', target: '_blank', className: 'navbar-brand' },
                             _react2.default.createElement('div', { className: 'spinner ' + this.state.ajaxAnimationClass }),
                             'Youtube Thumbnail Generator'
                         )

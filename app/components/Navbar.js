@@ -60,10 +60,10 @@ class Navbar extends React.Component {
                             <span className='icon-bar'></span>
                             <span className='icon-bar'></span>
                         </button>
-                        <Link to='/' className='navbar-brand'>
+                        <a href="/" target="_blank" className='navbar-brand'>
                             <div className={ 'spinner ' + this.state.ajaxAnimationClass}></div>
                             Youtube Thumbnail Generator
-                        </Link>
+                        </a>
                     </div>
                     <div className='navbar-collapse collapse' id='navbar'>
                         {

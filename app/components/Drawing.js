@@ -29,12 +29,30 @@ class Drawing extends React.Component {
             if (window.scrollY >= $('canvas').offset().top + 20) {
                 if (!$('canvas').hasClass('floating-box')) {
                     $('canvas').addClass('floating-box');
+                    $('.floating-text').removeClass('hidden');
                     // window.scrollTo(0, 305);
                 }
             } else {
                 if ($('canvas').hasClass('floating-box') && window.scrollY <= 250) {
                     $('canvas').removeClass('floating-box');
+                    $('.floating-text').addClass('hidden');
                     // window.scrollTo(0, 860);
+                }
+            }
+        });
+
+        $(document).keydown((e) => {
+            if ($('input:focus').length === 0 && (e.which === 70 || e.which === 102)) {
+                if (!$('canvas').hasClass('fullscreen-box')) {
+                    $('canvas').addClass('fullscreen-box');
+                }
+            }
+        });
+
+        $(document).keyup((e) => {
+            if ($('input:focus').length === 0 && (e.which === 70 || e.which === 102)) {
+                if ($('canvas').hasClass('fullscreen-box')) {
+                    $('canvas').removeClass('fullscreen-box');
                 }
             }
         });
@@ -464,9 +482,20 @@ class Drawing extends React.Component {
 
     handleMoveCanvas(state) {
         if (state) {
-            $('canvas').addClass('moved');
+            if ($(window).width() < 1714) {
+                $('canvas').addClass('moved');
+
+                // check if canvas is floating
+                if ($('canvas').hasClass('floating-box')) {
+                    $('.floating-text').addClass('hidden');
+                }
+            }
         } else {
             $('canvas').removeClass('moved');
+            // check if canvas is floating
+            if ($('canvas').hasClass('floating-box')) {
+                $('.floating-text').removeClass('hidden');
+            }
         }
     }
 
@@ -499,6 +528,9 @@ class Drawing extends React.Component {
                         <canvas id="editor">
                             Update your browser
                         </canvas>
+                        <div className="floating-text hidden">
+                            Press "F" for fullscreen preview
+                        </div>
 
                         <br /><br />
 
@@ -531,9 +563,9 @@ class Drawing extends React.Component {
 
                                             <Slider
                                             value={this.state.vignette.size}
-                                            min={-400}
-                                            max={400}
-                                            step={2}
+                                            min={-600}
+                                            max={600}
+                                            step={4}
                                             orientation="horizontal"
                                             onChange={this.handleVignetteChange.bind(this, 'size')}
                                             />
@@ -570,17 +602,6 @@ class Drawing extends React.Component {
                                             Frame options
                                         </div>
                                         <div className="panel-body">
-                                            <p>
-                                                Frame padding (distance from edges)
-                                            </p>
-                                            <Slider
-                                            value={this.state.padding}
-                                            min={0}
-                                            max={100}
-                                            step={1}
-                                            orientation="horizontal"
-                                            onChange={this.handlePaddingChange.bind(this)}
-                                            />
 
                                             <p>
                                                 Frame size
@@ -593,6 +614,19 @@ class Drawing extends React.Component {
                                             step={1}
                                             orientation="horizontal"
                                             onChange={this.handleBorderChange.bind(this)}
+                                            />
+
+                                            <p>
+                                                Frame padding (distance from edges)
+                                            </p>
+
+                                            <Slider
+                                            value={this.state.padding}
+                                            min={0}
+                                            max={100}
+                                            step={1}
+                                            orientation="horizontal"
+                                            onChange={this.handlePaddingChange.bind(this)}
                                             />
 
                                             <p>
@@ -669,6 +703,29 @@ class Drawing extends React.Component {
                                             <div className="form-inline">
                                                 <div className="form-group">
                                                     <label>
+                                                        Title font size
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.titleFontSize}
+                                                    onChange={this.handleTitleFontChange.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.titleFontSize}
+                                            min={10}
+                                            max={402}
+                                            step={3}
+                                            orientation="horizontal"
+                                            onChange={this.handleTitleFontChange.bind(this)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
                                                         Title horizontal shift
                                                     </label>
                                                     <input
@@ -710,29 +767,6 @@ class Drawing extends React.Component {
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleTitleShiftChange.bind(this, 2)}
-                                            />
-
-                                            <div className="form-inline">
-                                                <div className="form-group">
-                                                    <label>
-                                                        Title font size
-                                                    </label>
-                                                    <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={this.state.titleFontSize}
-                                                    onChange={this.handleTitleFontChange.bind(this)}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <Slider
-                                            value={this.state.titleFontSize}
-                                            min={10}
-                                            max={402}
-                                            step={3}
-                                            orientation="horizontal"
-                                            onChange={this.handleTitleFontChange.bind(this)}
                                             />
 
                                             <p>
@@ -808,6 +842,29 @@ class Drawing extends React.Component {
                                             <div className="form-inline">
                                                 <div className="form-group">
                                                     <label>
+                                                        Subtitle font size
+                                                    </label>
+                                                    <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    value={this.state.subTitleFontSize}
+                                                    onChange={this.handleSubTitleFontChange.bind(this)}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <Slider
+                                            value={this.state.subTitleFontSize}
+                                            min={10}
+                                            max={402}
+                                            step={3}
+                                            orientation="horizontal"
+                                            onChange={this.handleSubTitleFontChange.bind(this)}
+                                            />
+
+                                            <div className="form-inline">
+                                                <div className="form-group">
+                                                    <label>
                                                         Subtitle horizontal shift
                                                     </label>
                                                     <input
@@ -849,29 +906,6 @@ class Drawing extends React.Component {
                                             step={2}
                                             orientation="horizontal"
                                             onChange={this.handleSubTitleShiftChange.bind(this, 2)}
-                                            />
-
-                                            <div className="form-inline">
-                                                <div className="form-group">
-                                                    <label>
-                                                        Subtitle font size
-                                                    </label>
-                                                    <input
-                                                    type="text"
-                                                    className="form-control"
-                                                    value={this.state.subTitleFontSize}
-                                                    onChange={this.handleSubTitleFontChange.bind(this)}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <Slider
-                                            value={this.state.subTitleFontSize}
-                                            min={10}
-                                            max={402}
-                                            step={3}
-                                            orientation="horizontal"
-                                            onChange={this.handleSubTitleFontChange.bind(this)}
                                             />
 
                                             <p>
